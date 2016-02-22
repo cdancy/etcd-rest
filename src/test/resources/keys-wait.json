@@ -1,0 +1,15 @@
+{  
+   "action":"expire",
+   "node":{  
+      "key":"/hello",
+      "modifiedIndex":2,
+      "createdIndex":1
+   },
+   "prevNode":{  
+      "key":"/hello",
+      "value":"world",
+      "expiration":"2016-02-20T12:50:23.344023625Z",
+      "modifiedIndex":1,
+      "createdIndex":1
+   }
+}
