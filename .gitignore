@@ -3,6 +3,7 @@ syntax: glob
 target/
 test-output/
 bin/
+build/
 .settings/
 .classpath
 .project
@@ -13,6 +14,7 @@ bin/
 *.iws
 *.DS_STORE
 TAGS
+.gradle
 .metadata/
 atlassian-ide-plugin.xml
 .DS_Store
