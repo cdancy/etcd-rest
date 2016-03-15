@@ -1,0 +1,15 @@
+{  
+   "action":"delete",
+   "node":{  
+      "key":"/hello",
+      "dir":true,
+      "modifiedIndex":138,
+      "createdIndex":137
+   },
+   "prevNode":{  
+      "key":"/hello",
+      "dir":true,
+      "modifiedIndex":137,
+      "createdIndex":137
+   }
+}

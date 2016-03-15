@@ -52,6 +52,15 @@ public class EtcdErrorHandler implements HttpErrorHandler {
             case 400:
                exception = new IllegalArgumentException(message);
                break;
+            case 403:
+               if (command.getCurrentRequest().getMethod().equals("PUT")) {
+                  if (command.getCurrentRequest().getRequestLine().contains("/keys/")) {
+                     if (response.getMessage().contains("Not a file")) {
+                        exception = new ResourceAlreadyExistsException(message);
+                        break;
+                     }
+                  }
+               }
             case 409:
                exception = new ResourceAlreadyExistsException(message);
                break;

@@ -22,6 +22,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -29,6 +30,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.QueryParams;
 
 import com.cdancy.etcd.rest.domain.keys.Key;
@@ -47,6 +49,23 @@ public interface KeysApi {
    @PUT
    @Path("/{key}")
    Key createKey(@PathParam("key") String key, @FormParam("value") String value, @FormParam("ttl") int seconds);
+
+   @Named("keys:create-in-order")
+   @POST
+   @Path("/{key}")
+   Key createInOrderKey(@PathParam("key") String key, @FormParam("value") String value);
+
+   @Named("keys:create-in-order-with-options")
+   @POST
+   @Path("/{key}")
+   Key createInOrderKey(@PathParam("key") String key, @FormParam("value") String value, @FormParam("ttl") int seconds);
+
+   @Named("keys:list-in-order")
+   @GET
+   @QueryParams(keys = { "recursive", "sorted" }, values = { "true", "true" })
+   @Path("/{key}")
+   @Fallback(NullOnKeyNonFoundAnd404.class)
+   Key listInOrderKey(@PathParam("key") String key);
 
    @Named("keys:get")
    @GET
@@ -73,4 +92,29 @@ public interface KeysApi {
    @QueryParams(keys = { "wait" }, values = { "true" })
    @Fallback(NullOnKeyNonFoundAnd404.class)
    Key waitKey(@PathParam("key") String key, @QueryParam("waitIndex") int waitIndex);
+
+   @Named("keys:dir-create")
+   @PUT
+   @FormParams(keys = { "dir" }, values = { "true" })
+   @Path("/{dir}")
+   Key createDir(@PathParam("dir") String dir);
+
+   @Named("keys:dir-create-with-options")
+   @PUT
+   @FormParams(keys = { "dir" }, values = { "true" })
+   @Path("/{dir}")
+   Key createDir(@PathParam("dir") String dir, @FormParam("ttl") int seconds);
+
+   @Named("keys:dir-list")
+   @GET
+   @Path("/{dir}/")
+   @Fallback(NullOnKeyNonFoundAnd404.class)
+   Key listDir(@PathParam("dir") String dir, @QueryParam("recursive") boolean recursive);
+
+   @Named("keys:dir-delete")
+   @DELETE
+   @Path("/{dir}/")
+   @QueryParams(keys = { "recursive" }, values = { "true" })
+   @Fallback(NullOnKeyNonFoundAnd404.class)
+   Key deleteDir(@PathParam("dir") String dir);
 }

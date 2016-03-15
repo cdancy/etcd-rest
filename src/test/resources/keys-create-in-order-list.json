@@ -1,0 +1,23 @@
+{  
+   "action":"get",
+   "node":{  
+      "createdIndex":2,
+      "dir":true,
+      "key":"/hello",
+      "modifiedIndex":2,
+      "nodes":[  
+         {  
+            "createdIndex":2,
+            "key":"/queue/00000000000000000002",
+            "modifiedIndex":2,
+            "value":"World"
+         },
+         {  
+            "createdIndex":3,
+            "key":"/queue/00000000000000000003",
+            "modifiedIndex":3,
+            "value":"NewWorld"
+         }
+      ]
+   }
+}

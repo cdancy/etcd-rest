@@ -1,0 +1,9 @@
+{
+    "action": "create",
+    "node": {
+        "createdIndex": 6,
+        "key": "/hello/00000000000000000006",
+        "modifiedIndex": 6,
+        "value": "world"
+    }
+}

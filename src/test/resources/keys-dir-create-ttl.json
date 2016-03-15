@@ -1,0 +1,11 @@
+{  
+   "action":"set",
+   "node":{  
+      "key":"/hello",
+      "dir":true,
+      "expiration":"2016-03-15T01:10:18.076364453Z",
+      "ttl":100,
+      "modifiedIndex":142,
+      "createdIndex":142
+   }
+}

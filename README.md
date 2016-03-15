@@ -16,9 +16,9 @@ Client's can be built like so:
 ## Property based setup
 
 Client's do NOT need supply the endPoint as part of instantiating the EtcdClient object. 
-Instead one can supply them through system properties,
-environment variables, or a combination of the 2. System properties will be searched
-first and if not found we will attempt to query the environment.
+Instead one can supply it through system properties, environment variables, or a combination 
+of the 2. System properties will be searched first and if not found we will attempt to 
+query the environment.
 
 Setting the `endpoint` can be done with any of the following (searched in order):
 

@@ -1,0 +1,9 @@
+{  
+   "action":"set",
+   "node":{  
+      "key":"/hello",
+      "dir":true,
+      "modifiedIndex":137,
+      "createdIndex":137
+   }
+}

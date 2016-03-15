@@ -20,12 +20,12 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import org.jclouds.rest.ResourceAlreadyExistsException;
 import org.testng.annotations.Test;
 
 import com.cdancy.etcd.rest.EtcdApi;
 import com.cdancy.etcd.rest.EtcdApiMetadata;
 import com.cdancy.etcd.rest.domain.keys.Key;
-import com.cdancy.etcd.rest.features.KeysApi;
 import com.cdancy.etcd.rest.internal.BaseEtcdMockTest;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -45,6 +45,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key createdKey = api.createKey("hello", "world");
          assertNotNull(createdKey);
+         assertTrue(createdKey.action().equals("set"));
          assertTrue(createdKey.node().key().equals("/hello"));
          assertTrue(createdKey.node().value().equals("world"));
          assertSentWithFormData(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello", "value=world");
@@ -68,6 +69,66 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
          assertTrue(createdKey.node().key().equals("/hello"));
          assertTrue(createdKey.node().value().equals("world"));
          assertSentWithFormData(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello", "value=world&ttl=5");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testCreateInOrderKey() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(
+            new MockResponse().setBody(payloadFromResource("/keys-create-in-order.json")).setResponseCode(201));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key createdKey = api.createInOrderKey("hello", "world");
+         assertNotNull(createdKey);
+         assertTrue(createdKey.action().equals("create"));
+         assertTrue(createdKey.node().key().matches("/hello/.+"));
+         assertTrue(createdKey.node().value().equals("world"));
+         assertSentWithFormData(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello", "value=world");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testListInOrderKey() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(
+            new MockResponse().setBody(payloadFromResource("/keys-create-in-order-list.json")).setResponseCode(200));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key createdKey = api.listInOrderKey("hello");
+         assertNotNull(createdKey);
+         assertTrue(createdKey.action().equals("get"));
+         assertTrue(createdKey.node().nodes().size() == 2);
+         assertTrue(createdKey.node().key().equals("/hello"));
+         assertTrue(createdKey.node().dir());
+         assertTrue(createdKey.node().nodes().get(0).value().equals("World"));
+         assertTrue(createdKey.node().nodes().get(1).value().equals("NewWorld"));
+         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello?recursive=true&sorted=true");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testListInOrderKeyNonExistent() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(
+            new MockResponse().setBody(payloadFromResource("/keys-dir-delete-nonexistent.json")).setResponseCode(404));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key createdKey = api.listInOrderKey("hello");
+         assertNull(createdKey);
+         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello?recursive=true&sorted=true");
       } finally {
          etcdApi.close();
          server.shutdown();
@@ -173,6 +234,133 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
          assertTrue(waitedOnKey.action().equals("expire"));
          assertTrue(waitedOnKey.prevNode().value().equals("world"));
          assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello?wait=true&waitIndex=2");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testCreateDir() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(new MockResponse().setBody(payloadFromResource("/keys-dir-create.json")).setResponseCode(201));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key createdKey = api.createDir("hello");
+         assertNotNull(createdKey);
+         assertTrue(createdKey.action().equals("set"));
+         assertTrue(createdKey.node().key().equals("/hello"));
+         assertTrue(createdKey.node().dir());
+         assertSentWithFormData(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello", "dir=true");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   @Test(expectedExceptions = ResourceAlreadyExistsException.class)
+   public void testCreateDirAlreadyExists() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(new MockResponse().setBody(payloadFromResource("/keys-dir-create-already-exists.json"))
+            .setResponseCode(403));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         api.createDir("hello");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testCreateDirWithTTL() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(new MockResponse().setBody(payloadFromResource("/keys-dir-create-ttl.json")).setResponseCode(201));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key createdKey = api.createDir("hello", 100);
+         assertNotNull(createdKey);
+         assertTrue(createdKey.action().equals("set"));
+         assertTrue(createdKey.node().key().equals("/hello"));
+         assertTrue(createdKey.node().ttl() == 100);
+         assertTrue(createdKey.node().dir());
+         assertSentWithFormData(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello", "dir=true&ttl=100");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testListDir() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(new MockResponse().setBody(payloadFromResource("/keys-dir-list.json")).setResponseCode(200));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key createdKey = api.listDir("hello", true);
+         assertNotNull(createdKey);
+         assertTrue(createdKey.action().equals("get"));
+         assertTrue(createdKey.node().key().equals("/hello"));
+         assertTrue(createdKey.node().dir());
+         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello/?recursive=true");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testListDirNonExistent() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(
+            new MockResponse().setBody(payloadFromResource("/keys-get-delete-nonexistent.json")).setResponseCode(404));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key createdKey = api.listDir("hello", true);
+         assertNull(createdKey);
+         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello/?recursive=true");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testDeleteDir() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(new MockResponse().setBody(payloadFromResource("/keys-dir-delete.json")).setResponseCode(200));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key createdKey = api.deleteDir("hello");
+         assertNotNull(createdKey);
+         assertTrue(createdKey.action().equals("delete"));
+         assertTrue(createdKey.node().key().equals("/hello"));
+         assertTrue(createdKey.node().dir());
+         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello/?recursive=true");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testDeleteDirNonExistent() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(
+            new MockResponse().setBody(payloadFromResource("/keys-get-delete-nonexistent.json")).setResponseCode(404));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key createdKey = api.deleteDir("hello");
+         assertNull(createdKey);
+         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello/?recursive=true");
       } finally {
          etcdApi.close();
          server.shutdown();
