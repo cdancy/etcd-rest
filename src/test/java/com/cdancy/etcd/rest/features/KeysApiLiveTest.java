@@ -39,6 +39,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    private String inOrderKeyValueTwo;
    private String compareAndDeleteKeyValue;
    private String compareAndDeleteKeyValueFail;
+   private String compareAndDeleteKeyIndex;
+   private String compareAndDeleteKeyIndexFail;
 
    @BeforeClass
    protected void init() {
@@ -51,6 +53,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       inOrderKeyValueTwo = randomString();
       compareAndDeleteKeyValue = randomString();
       compareAndDeleteKeyValueFail = randomString();
+      compareAndDeleteKeyIndex = randomString();
+      compareAndDeleteKeyIndexFail = randomString();
    }
 
    @Test
@@ -158,6 +162,31 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       Key failedComparison = api().compareAndDeleteKey(compareAndDeleteKeyValueFail, "random");
       assertNotNull(failedComparison);
       assertTrue(failedComparison.cause().equals("[random != world]"));
+   }
+
+   @Test
+   public void testCompareAndeDeleteKeyIndex() {
+      String compareValue = "world";
+      Key createdKey = api().createKey(compareAndDeleteKeyIndex, compareValue);
+      assertNotNull(createdKey);
+
+      Key deletedKey = api().compareAndDeleteKey(compareAndDeleteKeyIndex, createdKey.node().createdIndex());
+      assertNotNull(deletedKey);
+      assertTrue(deletedKey.action().equals("compareAndDelete"));
+      assertTrue(deletedKey.prevNode().value().equals(compareValue));
+   }
+
+   @Test
+   public void testCompareAndeDeleteKeyValueWithWrongIndex() {
+      String compareValue = "world";
+      Key createdKey = api().createKey(compareAndDeleteKeyIndexFail, compareValue);
+      assertNotNull(createdKey);
+
+      int correctIndex = createdKey.node().createdIndex();
+      int wrongIndex = createdKey.node().createdIndex() + 1;
+      Key failedComparison = api().compareAndDeleteKey(compareAndDeleteKeyIndexFail, wrongIndex);
+      assertNotNull(failedComparison);
+      assertTrue(failedComparison.cause().equals("[" + wrongIndex + " != " + correctIndex + "]"));
    }
 
    @Test

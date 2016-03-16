@@ -279,6 +279,44 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       }
    }
 
+   public void testCompareAndDeleteKeyIndex() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(new MockResponse().setBody(payloadFromResource("/keys-compare-and-delete-value.json"))
+            .setResponseCode(200));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key deletedKey = api.compareAndDeleteKey("hello", 8);
+         assertNotNull(deletedKey);
+         assertTrue(deletedKey.action().equals("compareAndDelete"));
+         assertTrue(deletedKey.prevNode().key().equals("/hello"));
+         assertTrue(deletedKey.prevNode().value().equals("world"));
+         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello?prevIndex=8");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testCompareAndDeleteKeyValueWithWrongIndex() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(new MockResponse().setBody(payloadFromResource("/keys-compare-and-delete-index-fail.json"))
+            .setResponseCode(412));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key failedKey = api.compareAndDeleteKey("hello", 1);
+         assertNotNull(failedKey);
+         assertTrue(failedKey.cause().equals("[1 != 8]"));
+         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello?prevIndex=1");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
    public void testCreateDir() throws Exception {
       MockWebServer server = mockEtcdJavaWebServer();
 
