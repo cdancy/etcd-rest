@@ -1,3 +1,8 @@
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
 buildscript {
     repositories {
         jcenter()
@@ -5,6 +10,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1"
+        classpath "com.bmuschko:gradle-docker-plugin:2.6.7"
     }
 }
 
@@ -12,23 +18,20 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.artifactory'
+apply plugin: "com.bmuschko.docker-remote-api"
+
 apply from: "$rootDir/gradle/additional-artifacts.gradle"
 apply from: "$rootDir/gradle/dependencies.gradle"
-apply from: "$rootDir/gradle/publishing.gradle"
 apply from: "$rootDir/gradle/documentation.gradle"
+apply from: "$rootDir/gradle/publishing.gradle"
 apply from: "$rootDir/gradle/release.gradle"
-
-repositories {
-    jcenter()
-    mavenCentral()
-}
 
 dependencies {
     compile ('org.apache.jclouds:jclouds-core:1.9.2') 
     compile ('org.apache.jclouds.driver:jclouds-okhttp:1.9.2') 
     compile ('com.google.auto.service:auto-service:1.0-rc2') 
     compile ('com.google.auto.value:auto-value:1.1')
-
+    
     testCompile ('org.apache.jclouds:jclouds-core:1.9.2:tests')
     testCompile ('org.testng:testng:6.8.21') 
     testCompile ('org.assertj:assertj-core:1.7.0') 
@@ -69,12 +72,20 @@ task mockTest(type: Test) {
 task integTest(type: Test, dependsOn: ['mockTest']) {
     useTestNG() 
     include "**/*LiveTest.class"
-    exclude "**/MembersApiLiveTest.class"
     testLogging {
-	showStandardStreams = true
+		showStandardStreams = true
         events 'started', 'passed', 'failed'
-    }    
-    systemProperties = ["test.etcd.endpoint" : "${testEtcdEndpoint}"]
+    } 
+    doFirst {
+    	String runtimeURL = bootstrapDocker ? "http://${getLocalHost()}:2379" : "${testEtcdEndpoint}"
+    	systemProperties = ["test.etcd.endpoint" : runtimeURL]
+    }
+}
+
+if (bootstrapDocker) {
+	def integTestTask = project.tasks.getByName('integTest')
+	integTestTask.dependsOn('startNode')
+	integTestTask.finalizedBy('teardownNode')
 }
 
 artifactory {
@@ -101,3 +112,87 @@ publishing {
 		}
 	}
 }
+
+docker {
+    url = testDockerEndpoint
+}
+
+ext.etcdContainerName = "etcd-integ-test"
+
+task inspectNode(type: com.bmuschko.gradle.docker.tasks.container.DockerInspectContainer) {
+    targetContainerId { etcdContainerName }
+}
+
+task pullEtcdImage(type: com.bmuschko.gradle.docker.tasks.image.DockerPullImage) {
+    repository = testEtcdImage
+    tag = testEtcdTag
+}
+
+task stopNode(type: com.bmuschko.gradle.docker.tasks.container.DockerStopContainer) {
+	onlyIf { checkNode() }
+    dependsOn pullEtcdImage
+    targetContainerId { etcdContainerName }
+    timeout = 30
+}
+
+task removeNode(type: com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer) {
+	onlyIf { checkNode() }
+    dependsOn stopNode
+    targetContainerId { etcdContainerName }
+    removeVolumes = true
+    force = true
+}
+
+task createNode(type: com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer) {
+    dependsOn removeNode
+    targetImageId { pullEtcdImage.repository + ":" + pullEtcdImage.tag }
+    containerName = etcdContainerName
+    portBindings = ['2379:2379', '2380:2380']
+    binds = ['/usr/share/ca-certificates/' : '/etc/ssl/certs']
+    cmd = ['-name', 'etcd0', 
+    '-advertise-client-urls', "http://${getLocalHost()}:2379",
+    '-listen-client-urls', 'http://0.0.0.0:2379',
+    '-initial-advertise-peer-urls', "http://${getLocalHost()}:2380",
+    '-listen-peer-urls', 'http://0.0.0.0:2380',
+    '-initial-cluster-token', 'etcd-cluster-1',
+    '-initial-cluster', "etcd0=http://${getLocalHost()}:2380",
+    '-initial-cluster-state', 'new']
+}
+
+task startNode(type: com.bmuschko.gradle.docker.tasks.container.DockerStartContainer) {
+    dependsOn createNode
+    targetContainerId { createNode.getContainerId() }
+    doLast {
+    	logger.quiet "Sleeping for 5 seconds to allow cluster to init..."
+    	sleep(5000)
+    }
+}
+
+task postTestStopNode(type: com.bmuschko.gradle.docker.tasks.container.DockerStopContainer) {
+    targetContainerId { etcdContainerName }
+    timeout = 30
+}
+
+task teardownNode(type: com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer) {
+    dependsOn postTestStopNode
+    targetContainerId { etcdContainerName }
+    removeVolumes = true
+    force = true
+}
+
+public boolean checkNode() {
+	boolean containerFound = false
+	try {
+		Task inspect = project.tasks.getByName("inspectNode")
+		inspect.execute()
+		containerFound = true
+	} catch (Exception e) {
+		// println e.message
+	}
+	containerFound
+}
+
+public String getLocalHost() {
+    InetAddress.getLocalHost().getHostAddress()
+}
+

@@ -30,7 +30,6 @@ import org.testng.annotations.Test;
 import com.cdancy.etcd.rest.BaseEtcdApiLiveTest;
 import com.cdancy.etcd.rest.domain.members.CreateMember;
 import com.cdancy.etcd.rest.domain.members.Member;
-import com.cdancy.etcd.rest.features.MembersApi;
 import com.google.common.collect.ImmutableList;
 
 @Test(groups = "live", testName = "MembersApiLiveTest", singleThreaded = true)
@@ -50,22 +49,24 @@ public class MembersApiLiveTest extends BaseEtcdApiLiveTest {
       List<Member> members = api().list();
       assertNotNull(members);
       assertTrue(members.size() > 0);
-      for (Member member : members) {
-         if (!member.id().equals(selfID)) {
-            this.nonSelfMember = member;
-            return;
+      if (members.size() != 1) {
+         for (Member member : members) {
+            if (!member.id().equals(selfID)) {
+               this.nonSelfMember = member;
+               return;
+            }
          }
+         throw new RuntimeException("Could not find another member in cluster with different id");
       }
-      throw new RuntimeException("Could not find another member in cluster with different id");
    }
 
-   @Test(dependsOnMethods = "testListMembers")
+   @Test(dependsOnMethods = "testListMembers", enabled = false)
    public void testDeleteMember() {
       boolean successful = api().delete(nonSelfMember.id());
       assertTrue(successful);
    }
 
-   @Test(dependsOnMethods = "testDeleteMember")
+   @Test(dependsOnMethods = "testDeleteMember", enabled = false)
    public void testAddMember() {
       assertNotNull(nonSelfMember);
 
@@ -74,7 +75,7 @@ public class MembersApiLiveTest extends BaseEtcdApiLiveTest {
       assertTrue(addedMember.peerURLs().containsAll(nonSelfMember.peerURLs()));
    }
 
-   @Test(dependsOnMethods = "testAddMember", expectedExceptions = ResourceAlreadyExistsException.class)
+   @Test(dependsOnMethods = "testAddMember", expectedExceptions = ResourceAlreadyExistsException.class, enabled = false)
    public void testAddExistingMember() {
       assertNotNull(addedMember);
 
@@ -82,7 +83,7 @@ public class MembersApiLiveTest extends BaseEtcdApiLiveTest {
       assertNull(existingMember);
    }
 
-   @Test(dependsOnMethods = "testAddExistingMember", expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = IllegalArgumentException.class)
    public void testAddMemberWithMalformedURL() {
       api().add(CreateMember.create(null, ImmutableList.of("htp:/hello/world:11bye"), null));
    }
