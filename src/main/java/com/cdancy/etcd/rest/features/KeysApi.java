@@ -34,7 +34,9 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.QueryParams;
 
 import com.cdancy.etcd.rest.domain.keys.Key;
-import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.NullOnKeyNonFoundAnd404;
+import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.KeyOnAlreadyExists;
+import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.KeyOnCompareFailed;
+import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.KeyOnNonFound;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/{jclouds.api-version}/keys")
@@ -64,57 +66,71 @@ public interface KeysApi {
    @GET
    @QueryParams(keys = { "recursive", "sorted" }, values = { "true", "true" })
    @Path("/{key}")
-   @Fallback(NullOnKeyNonFoundAnd404.class)
+   @Fallback(KeyOnNonFound.class)
    Key listInOrderKey(@PathParam("key") String key);
 
    @Named("keys:get")
    @GET
    @Path("/{key}")
-   @Fallback(NullOnKeyNonFoundAnd404.class)
+   @Fallback(KeyOnNonFound.class)
    Key getKey(@PathParam("key") String key);
 
    @Named("keys:delete")
    @DELETE
    @Path("/{key}")
-   @Fallback(NullOnKeyNonFoundAnd404.class)
+   @Fallback(KeyOnNonFound.class)
    Key deleteKey(@PathParam("key") String key);
 
    @Named("keys:wait")
    @GET
    @Path("/{key}")
    @QueryParams(keys = { "wait" }, values = { "true" })
-   @Fallback(NullOnKeyNonFoundAnd404.class)
+   @Fallback(KeyOnNonFound.class)
    Key waitKey(@PathParam("key") String key);
 
    @Named("keys:wait-with-options")
    @GET
    @Path("/{key}")
    @QueryParams(keys = { "wait" }, values = { "true" })
-   @Fallback(NullOnKeyNonFoundAnd404.class)
+   @Fallback(KeyOnNonFound.class)
    Key waitKey(@PathParam("key") String key, @QueryParam("waitIndex") int waitIndex);
+
+   @Named("keys:compare-and-delete-value")
+   @DELETE
+   @Path("/{key}")
+   @Fallback(KeyOnCompareFailed.class)
+   Key compareAndDeleteKey(@PathParam("key") String key, @QueryParam("prevValue") String prevValue);
+
+   @Named("keys:compare-and-delete-index")
+   @DELETE
+   @Path("/{key}")
+   @Fallback(KeyOnCompareFailed.class)
+   Key compareAndDeleteKey(@PathParam("key") String key, @QueryParam("prevIndex") int prevIndex);
 
    @Named("keys:dir-create")
    @PUT
    @FormParams(keys = { "dir" }, values = { "true" })
    @Path("/{dir}")
+   @Fallback(KeyOnAlreadyExists.class)
    Key createDir(@PathParam("dir") String dir);
 
    @Named("keys:dir-create-with-options")
    @PUT
    @FormParams(keys = { "dir" }, values = { "true" })
    @Path("/{dir}")
+   @Fallback(KeyOnAlreadyExists.class)
    Key createDir(@PathParam("dir") String dir, @FormParam("ttl") int seconds);
 
    @Named("keys:dir-list")
    @GET
    @Path("/{dir}/")
-   @Fallback(NullOnKeyNonFoundAnd404.class)
+   @Fallback(KeyOnNonFound.class)
    Key listDir(@PathParam("dir") String dir, @QueryParam("recursive") boolean recursive);
 
    @Named("keys:dir-delete")
    @DELETE
    @Path("/{dir}/")
    @QueryParams(keys = { "recursive" }, values = { "true" })
-   @Fallback(NullOnKeyNonFoundAnd404.class)
+   @Fallback(KeyOnNonFound.class)
    Key deleteDir(@PathParam("dir") String dir);
 }

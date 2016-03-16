@@ -17,10 +17,8 @@
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import org.jclouds.rest.ResourceAlreadyExistsException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -39,6 +37,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    private String inOrderKey;
    private String inOrderKeyValueOne;
    private String inOrderKeyValueTwo;
+   private String compareAndDeleteKeyValue;
+   private String compareAndDeleteKeyValueFail;
 
    @BeforeClass
    protected void init() {
@@ -49,6 +49,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       inOrderKey = randomString();
       inOrderKeyValueOne = randomString();
       inOrderKeyValueTwo = randomString();
+      compareAndDeleteKeyValue = randomString();
+      compareAndDeleteKeyValueFail = randomString();
    }
 
    @Test
@@ -68,7 +70,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       }
 
       createdKey = api().getKey(localKey);
-      assertNull(createdKey);
+      assertNotNull(createdKey);
+      assertTrue(createdKey.message().equals("Key not found"));
    }
 
    @Test
@@ -123,13 +126,38 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    @Test
    public void testGetNonExistentKey() {
       Key deletedKey = api().getKey(randomString());
-      assertNull(deletedKey);
+      assertNotNull(deletedKey);
+      assertTrue(deletedKey.message().equals("Key not found"));
    }
 
    @Test
    public void testDeleteNonExistentKey() {
       Key deletedKey = api().deleteKey(randomString());
-      assertNull(deletedKey);
+      assertNotNull(deletedKey);
+      assertTrue(deletedKey.message().equals("Key not found"));
+   }
+
+   @Test
+   public void testCompareAndeDeleteKeyValue() {
+      String compareValue = "world";
+      Key createdKey = api().createKey(compareAndDeleteKeyValue, compareValue);
+      assertNotNull(createdKey);
+
+      Key deletedKey = api().compareAndDeleteKey(compareAndDeleteKeyValue, compareValue);
+      assertNotNull(deletedKey);
+      assertTrue(deletedKey.action().equals("compareAndDelete"));
+      assertTrue(deletedKey.prevNode().value().equals(compareValue));
+   }
+
+   @Test
+   public void testCompareAndeDeleteKeyValueWithWrongValue() {
+      String compareValue = "world";
+      Key createdKey = api().createKey(compareAndDeleteKeyValueFail, compareValue);
+      assertNotNull(createdKey);
+
+      Key failedComparison = api().compareAndDeleteKey(compareAndDeleteKeyValueFail, "random");
+      assertNotNull(failedComparison);
+      assertTrue(failedComparison.cause().equals("[random != world]"));
    }
 
    @Test
@@ -175,9 +203,11 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       assertTrue(key.node().dir());
    }
 
-   @Test(dependsOnMethods = "testCreateDir", expectedExceptions = ResourceAlreadyExistsException.class)
+   @Test(dependsOnMethods = "testCreateDir")
    public void testCreateDirAlreadyExists() {
-      api().createDir(dir);
+      Key key = api().createDir(dir);
+      assertNotNull(key);
+      assertTrue(key.message().equals("Not a file"));
    }
 
    @Test(dependsOnMethods = "testCreateDirAlreadyExists")
@@ -201,7 +231,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    @Test
    public void testListDirNonExistent() {
       Key key = api().listDir(randomString(), true);
-      assertNull(key);
+      assertNotNull(key);
+      assertTrue(key.message().equals("Key not found"));
    }
 
    @Test
@@ -218,17 +249,21 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       }
 
       Key nonExistentDir = api().listDir(dirWithTTL, true);
-      assertNull(nonExistentDir);
+      assertNotNull(nonExistentDir);
+      assertTrue(nonExistentDir.message().equals("Key not found"));
    }
 
    @Test
    public void testDeleteDirNonExistent() {
       Key key = api().deleteDir(randomString());
-      assertNull(key);
+      assertNotNull(key);
+      assertTrue(key.message().equals("Key not found"));
    }
 
    @AfterClass
    public void finalize() {
+      api().deleteKey(compareAndDeleteKeyValue);
+      api().deleteKey(compareAndDeleteKeyValueFail);
       api().deleteKey(key);
       api().deleteDir(inOrderKey);
       api().deleteDir(dir);

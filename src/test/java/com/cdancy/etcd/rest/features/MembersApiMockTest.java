@@ -18,19 +18,16 @@ package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
-import org.jclouds.rest.ResourceAlreadyExistsException;
 import org.testng.annotations.Test;
 
 import com.cdancy.etcd.rest.EtcdApi;
 import com.cdancy.etcd.rest.EtcdApiMetadata;
 import com.cdancy.etcd.rest.domain.members.CreateMember;
 import com.cdancy.etcd.rest.domain.members.Member;
-import com.cdancy.etcd.rest.features.MembersApi;
 import com.cdancy.etcd.rest.internal.BaseEtcdMockTest;
 import com.google.common.collect.ImmutableList;
 import com.squareup.okhttp.mockwebserver.MockResponse;
@@ -79,7 +76,7 @@ public class MembersApiMockTest extends BaseEtcdMockTest {
       }
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test
    public void testAddMemberWithMalformedURL() throws Exception {
       MockWebServer server = mockEtcdJavaWebServer();
 
@@ -89,14 +86,17 @@ public class MembersApiMockTest extends BaseEtcdMockTest {
       MembersApi api = etcdApi.membersApi();
       try {
          String peerURL = "htp:/hello/world:11bye";
-         api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
+         Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
+         assertNotNull(member);
+         assertTrue(member.message().startsWith("URL scheme must be http or https"));
+         assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
       } finally {
          etcdApi.close();
          server.shutdown();
       }
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test
    public void testAddMemberWithIllegalFormat() throws Exception {
       MockWebServer server = mockEtcdJavaWebServer();
 
@@ -106,14 +106,17 @@ public class MembersApiMockTest extends BaseEtcdMockTest {
       MembersApi api = etcdApi.membersApi();
       try {
          String peerURL = "http://www.google.com";
-         api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
+         Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
+         assertNotNull(member);
+         assertTrue(member.message().startsWith("URL address does not have the form"));
+         assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
       } finally {
          etcdApi.close();
          server.shutdown();
       }
    }
 
-   @Test(expectedExceptions = ResourceAlreadyExistsException.class)
+   @Test
    public void testAddExistingMember() throws Exception {
       MockWebServer server = mockEtcdJavaWebServer();
 
@@ -124,7 +127,8 @@ public class MembersApiMockTest extends BaseEtcdMockTest {
       try {
          String peerURL = "http://10.0.0.10:2380";
          Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
-         assertNull(member);
+         assertNotNull(member);
+         assertTrue(member.message().startsWith("etcdserver: ID exists"));
          assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
       } finally {
          etcdApi.close();

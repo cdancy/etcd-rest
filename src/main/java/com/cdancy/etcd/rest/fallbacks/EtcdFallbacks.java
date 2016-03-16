@@ -22,9 +22,16 @@ import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 
 import org.jclouds.Fallback;
-import org.jclouds.http.HttpUtils;
+
+import com.cdancy.etcd.rest.domain.keys.Key;
+import com.cdancy.etcd.rest.domain.members.Member;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public final class EtcdFallbacks {
+
+   private static final JsonParser parser = new JsonParser();
 
    public static final class FalseOn503 implements Fallback<Boolean> {
       public Boolean createOrPropagate(Throwable t) throws Exception {
@@ -36,13 +43,52 @@ public final class EtcdFallbacks {
       }
    }
 
-   public static final class NullOnKeyNonFoundAnd404 implements Fallback<Object> {
+   public static final class MemberOnIllegalRequest implements Fallback<Object> {
       public Object createOrPropagate(Throwable t) throws Exception {
-         if (checkNotNull(t, "throwable") != null && t.getMessage().contains("Key not found")
-               && HttpUtils.contains404(t)) {
-            return null;
+         if (checkNotNull(t, "throwable") != null && t.getMessage().contains("message")) {
+            return createMemberFromErrorMessage(t.getMessage());
          }
          throw propagate(t);
       }
+   }
+
+   public static final class KeyOnAlreadyExists implements Fallback<Object> {
+      public Object createOrPropagate(Throwable t) throws Exception {
+         if (checkNotNull(t, "throwable") != null && t.getMessage().contains("Not a file")) {
+            return createKeyFromErrorMessage(t.getMessage());
+         }
+         throw propagate(t);
+      }
+   }
+
+   public static final class KeyOnNonFound implements Fallback<Object> {
+      public Object createOrPropagate(Throwable t) throws Exception {
+         if (checkNotNull(t, "throwable") != null && t.getMessage().contains("Key not found")) {
+            return createKeyFromErrorMessage(t.getMessage());
+         }
+         throw propagate(t);
+      }
+   }
+
+   public static final class KeyOnCompareFailed implements Fallback<Object> {
+      public Object createOrPropagate(Throwable t) throws Exception {
+         if (checkNotNull(t, "throwable") != null && t.getMessage().contains("Compare failed")) {
+            return createKeyFromErrorMessage(t.getMessage());
+         }
+         throw propagate(t);
+      }
+   }
+
+   public static Key createKeyFromErrorMessage(String message) {
+      JsonElement element = parser.parse(message);
+      JsonObject object = element.getAsJsonObject();
+      return Key.create(null, null, null, object.get("errorCode").getAsInt(), object.get("message").getAsString(),
+            object.get("cause").getAsString(), object.get("index").getAsInt());
+   }
+
+   public static Member createMemberFromErrorMessage(String message) {
+      JsonElement element = parser.parse(message);
+      JsonObject object = element.getAsJsonObject();
+      return Member.create(null, null, null, null, object.get("message").getAsString());
    }
 }

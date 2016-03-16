@@ -1,0 +1,14 @@
+{
+    "action": "compareAndDelete",
+    "node": {
+        "key": "/hello",
+        "modifiedIndex": 9,
+        "createdIndex": 8
+    },
+    "prevNode": {
+        "key": "/hello",
+        "value": "world",
+        "modifiedIndex": 8,
+        "createdIndex": 8
+    }
+}

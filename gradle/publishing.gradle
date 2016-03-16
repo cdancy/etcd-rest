@@ -63,7 +63,7 @@ bintray {
 
         version {
             vcsTag = "v$project.version"
-            attributes = ['etcd-rest': ["com.cdancy.etcd-rest:${project.group}:${project.name}"]]
+            attributes = ['etcd-rest': ["${project.group}:${project.name}:${project.version}"]]
 
             gpg {
                 sign = true

@@ -29,7 +29,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
-import org.jclouds.rest.ResourceAlreadyExistsException;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.SelectJson;
@@ -37,36 +36,22 @@ import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.cdancy.etcd.rest.domain.members.CreateMember;
 import com.cdancy.etcd.rest.domain.members.Member;
+import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.MemberOnIllegalRequest;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/{jclouds.api-version}/members")
 public interface MembersApi {
 
-   /**
-    * @return list of members within cluster
-    */
    @Named("members:list")
    @SelectJson("members")
    @GET
    List<Member> list();
 
-   /**
-    * @param memberToCreate
-    *           non-existing member to add to cluster
-    * @return newly created member
-    * @throws ResourceAlreadyExistsException
-    *            if member with peerURLs was already present
-    */
    @Named("members:add")
+   @Fallback(MemberOnIllegalRequest.class)
    @POST
    Member add(@BinderParam(BindToJsonPayload.class) CreateMember memberToCreate);
 
-   /**
-    * @param memberID
-    *           id of previously existing member
-    * @return true if member was deleted or false if id did not match an
-    *         existing member
-    */
    @Named("members:delete")
    @Path("/{id}")
    @Fallback(FalseOnNotFoundOr404.class)

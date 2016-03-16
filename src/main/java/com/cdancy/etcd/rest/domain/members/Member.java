@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableList;
 @AutoValue
 public abstract class Member {
 
+   @Nullable
    public abstract String id();
 
    @Nullable
@@ -37,13 +38,16 @@ public abstract class Member {
 
    public abstract List<String> clientURLs();
 
+   @Nullable
+   public abstract String message();
+
    Member() {
    }
 
-   @SerializedNames({ "id", "name", "peerURLs", "clientURLs" })
-   private static Member create(String id, String name, List<String> peerURLs, List<String> clientURLs) {
-      if (clientURLs == null)
-         clientURLs = ImmutableList.of();
-      return new AutoValue_Member(id, name, ImmutableList.copyOf(peerURLs), ImmutableList.copyOf(clientURLs));
+   @SerializedNames({ "id", "name", "peerURLs", "clientURLs", "message" })
+   public static Member create(String id, String name, List<String> peerURLs, List<String> clientURLs, String message) {
+      return new AutoValue_Member(id, name,
+            peerURLs != null ? ImmutableList.copyOf(peerURLs) : ImmutableList.<String> of(),
+            clientURLs != null ? ImmutableList.copyOf(clientURLs) : ImmutableList.<String> of(), message);
    }
 }

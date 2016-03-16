@@ -28,6 +28,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.ResourceAlreadyExistsException;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Throwables;
@@ -55,18 +56,27 @@ public class EtcdErrorHandler implements HttpErrorHandler {
             case 403:
                if (command.getCurrentRequest().getMethod().equals("PUT")) {
                   if (command.getCurrentRequest().getRequestLine().contains("/keys/")) {
-                     if (response.getMessage().contains("Not a file")) {
+                     if (message.contains("Not a file")) {
                         exception = new ResourceAlreadyExistsException(message);
                         break;
                      }
                   }
                }
+            case 404:
+               exception = new ResourceNotFoundException(message);
+               break;
             case 409:
                exception = new ResourceAlreadyExistsException(message);
                break;
-            default:
-               exception = new HttpResponseException(message, command, response);
-               break;
+            case 412:
+               if (command.getCurrentRequest().getMethod().equals("DELETE")) {
+                  if (command.getCurrentRequest().getRequestLine().contains("/keys/")) {
+                     if (message.contains("Compare failed")) {
+                        exception = new IllegalArgumentException(message);
+                        break;
+                     }
+                  }
+               }
          }
       } catch (Exception e) {
          exception = new HttpResponseException(command, response, e);

@@ -25,18 +25,31 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Key {
 
+   @Nullable
    public abstract String action();
 
+   @Nullable
    public abstract Node node();
 
    @Nullable
    public abstract Node prevNode();
 
+   public abstract int errorCode();
+
+   @Nullable
+   public abstract String message();
+
+   @Nullable
+   public abstract String cause();
+
+   public abstract int index();
+
    Key() {
    }
 
-   @SerializedNames({ "action", "node", "prevNode" })
-   public static Key create(String action, Node node, Node prevNode) {
-      return new AutoValue_Key(action, node, prevNode);
+   @SerializedNames({ "action", "node", "prevNode", "errorCode", "message", "cause", "index" })
+   public static Key create(String action, Node node, Node prevNode, int errorCode, String message, String cause,
+         int index) {
+      return new AutoValue_Key(action, node, prevNode, errorCode, message, cause, index);
    }
 }
