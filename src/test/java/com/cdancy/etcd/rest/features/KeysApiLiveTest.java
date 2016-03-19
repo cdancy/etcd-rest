@@ -43,6 +43,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    private String compareAndDeleteKeyIndexFail;
    private String compareAndSwapKeyValue;
    private String compareAndSwapKeyValueFail;
+   private String compareAndSwapKeyIndex;
+   private String compareAndSwapKeyIndexFail;
 
    @BeforeClass
    protected void init() {
@@ -59,6 +61,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       compareAndDeleteKeyIndexFail = randomString();
       compareAndSwapKeyValue = randomString();
       compareAndSwapKeyValueFail = randomString();
+      compareAndSwapKeyIndex = randomString();
+      compareAndSwapKeyIndexFail = randomString();
    }
 
    @Test
@@ -221,6 +225,35 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    }
 
    @Test
+   public void testCompareAndeSwapKeyIndex() {
+      String compareValue = "hello";
+      Key createdKey = api().createKey(compareAndSwapKeyIndex, compareValue);
+      assertNotNull(createdKey);
+      assertTrue(createdKey.errorCode() == 0);
+
+      Key key = api().compareAndSwapKeyIndex(compareAndSwapKeyIndex, createdKey.node().createdIndex(), "world");
+      assertNotNull(key);
+      assertTrue(key.action().equals("compareAndSwap"));
+      assertTrue(key.prevNode().value().equals("hello"));
+      assertTrue(key.node().value().equals("world"));
+   }
+
+   @Test
+   public void testCompareAndeSwapKeyIndexFail() {
+      String compareValue = "hello";
+      Key createdKey = api().createKey(compareAndSwapKeyIndexFail, compareValue);
+      assertNotNull(createdKey);
+      assertTrue(createdKey.errorCode() == 0);
+
+      int goodIndex = createdKey.node().createdIndex();
+      int badIndex = createdKey.node().createdIndex() + 1;
+      Key key = api().compareAndSwapKeyIndex(compareAndSwapKeyIndexFail, badIndex, "world");
+      assertNotNull(key);
+      assertTrue(key.errorCode() != 0);
+      assertTrue(key.cause().equals("[" + badIndex + " != " + goodIndex + "]"));
+   }
+
+   @Test
    public void testWaitKey() {
       String localKey = randomString();
       String localValue = randomString();
@@ -322,6 +355,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
 
    @AfterClass
    public void finalize() {
+      api().deleteKey(compareAndSwapKeyIndex);
+      api().deleteKey(compareAndSwapKeyIndexFail);
       api().deleteKey(compareAndSwapKeyValue);
       api().deleteKey(compareAndSwapKeyValueFail);
       api().deleteKey(compareAndDeleteKeyValue);

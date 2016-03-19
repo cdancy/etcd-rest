@@ -114,6 +114,13 @@ public interface KeysApi {
    Key compareAndSwapKeyValue(@PathParam("key") String key, @QueryParam("prevValue") String prevValue,
          @FormParam("value") String value);
 
+   @Named("keys:compare-and-swap-index")
+   @PUT
+   @Path("/{key}")
+   @Fallback(KeyOnCompareFailed.class)
+   Key compareAndSwapKeyIndex(@PathParam("key") String key, @QueryParam("prevIndex") int prevIndex,
+         @FormParam("value") String value);
+
    @Named("keys:dir-create")
    @PUT
    @FormParams(keys = { "dir" }, values = { "true" })
