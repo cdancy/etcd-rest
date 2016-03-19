@@ -18,7 +18,6 @@ package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
@@ -80,17 +79,21 @@ public class MembersApiLiveTest extends BaseEtcdApiLiveTest {
       assertNotNull(addedMember);
 
       Member existingMember = api().add(CreateMember.create(null, addedMember.peerURLs(), addedMember.clientURLs()));
-      assertNull(existingMember);
+      assertNotNull(existingMember);
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test
    public void testAddMemberWithMalformedURL() {
-      api().add(CreateMember.create(null, ImmutableList.of("htp:/hello/world:11bye"), null));
+      Member member = api().add(CreateMember.create(null, ImmutableList.of("htp:/hello/world:11bye"), null));
+      assertNotNull(member);
+      assertTrue(member.message().startsWith("URL scheme must be http or https"));
    }
 
-   @Test(dependsOnMethods = "testAddMemberWithMalformedURL", expectedExceptions = IllegalArgumentException.class)
+   @Test
    public void testAddMemberWithIllegalFormat() {
-      api().add(CreateMember.create(null, ImmutableList.of("http://www.google.com"), null));
+      Member member = api().add(CreateMember.create(null, ImmutableList.of("http://www.google.com"), null));
+      assertNotNull(member);
+      assertTrue(member.message().startsWith("URL address does not have the form"));
    }
 
    @Test(dependsOnMethods = "testAddMemberWithIllegalFormat")

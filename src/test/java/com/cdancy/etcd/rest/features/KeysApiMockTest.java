@@ -395,6 +395,45 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       }
    }
 
+   public void testCompareAndSwapKeyExist() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(
+            new MockResponse().setBody(payloadFromResource("/keys-compare-and-swap-exist.json")).setResponseCode(200));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key key = api.compareAndSwapKeyExist("foo", true, "world");
+         assertNotNull(key);
+         assertTrue(key.errorCode() == 0);
+         assertTrue(key.action().equals("update"));
+         assertTrue(key.prevNode().value().equals("hello"));
+         assertTrue(key.node().value().equals("world"));
+         assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/foo?prevExist=true");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testCompareAndSwapKeyExistFail() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(new MockResponse().setBody(payloadFromResource("/keys-compare-and-swap-exist-fail.json"))
+            .setResponseCode(412));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key failedKey = api.compareAndSwapKeyExist("foo", false, "world");
+         assertNotNull(failedKey);
+         assertTrue(failedKey.message().equals("Key already exists"));
+         assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/foo?prevExist=false");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
    public void testCreateDir() throws Exception {
       MockWebServer server = mockEtcdJavaWebServer();
 

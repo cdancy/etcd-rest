@@ -72,10 +72,13 @@ public final class EtcdFallbacks {
 
    public static final class KeyOnCompareFailed implements Fallback<Object> {
       public Object createOrPropagate(Throwable t) throws Exception {
-         if (checkNotNull(t, "throwable") != null && t.getMessage().contains("Compare failed")) {
+         if (checkNotNull(t, "throwable") != null
+               && (t.getMessage().contains("Compare failed") || t.getMessage().contains("Key already exists"))) {
             return createKeyFromErrorMessage(t.getMessage());
          }
-         throw propagate(t);
+         throw
+
+         propagate(t);
       }
    }
 

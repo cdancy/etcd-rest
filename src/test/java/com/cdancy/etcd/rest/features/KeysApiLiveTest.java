@@ -45,6 +45,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    private String compareAndSwapKeyValueFail;
    private String compareAndSwapKeyIndex;
    private String compareAndSwapKeyIndexFail;
+   private String compareAndSwapKeyExist;
+   private String compareAndSwapKeyExistFail;
 
    @BeforeClass
    protected void init() {
@@ -63,6 +65,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       compareAndSwapKeyValueFail = randomString();
       compareAndSwapKeyIndex = randomString();
       compareAndSwapKeyIndexFail = randomString();
+      compareAndSwapKeyExist = randomString();
+      compareAndSwapKeyExistFail = randomString();
    }
 
    @Test
@@ -254,6 +258,33 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    }
 
    @Test
+   public void testCompareAndeSwapKeyExist() {
+      String compareValue = "hello";
+      Key createdKey = api().createKey(compareAndSwapKeyExist, compareValue);
+      assertNotNull(createdKey);
+      assertTrue(createdKey.errorCode() == 0);
+
+      Key key = api().compareAndSwapKeyExist(compareAndSwapKeyExist, true, "world");
+      assertNotNull(key);
+      assertTrue(key.action().equals("update"));
+      assertTrue(key.prevNode().value().equals("hello"));
+      assertTrue(key.node().value().equals("world"));
+   }
+
+   @Test
+   public void testCompareAndeSwapKeyExistFail() {
+      String compareValue = "hello";
+      Key createdKey = api().createKey(compareAndSwapKeyExistFail, compareValue);
+      assertNotNull(createdKey);
+      assertTrue(createdKey.errorCode() == 0);
+
+      Key key = api().compareAndSwapKeyExist(compareAndSwapKeyExistFail, false, "world");
+      assertNotNull(key);
+      assertTrue(key.errorCode() != 0);
+      assertTrue(key.message().equals("Key already exists"));
+   }
+
+   @Test
    public void testWaitKey() {
       String localKey = randomString();
       String localValue = randomString();
@@ -355,6 +386,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
 
    @AfterClass
    public void finalize() {
+      api().deleteKey(compareAndSwapKeyExist);
+      api().deleteKey(compareAndSwapKeyExistFail);
       api().deleteKey(compareAndSwapKeyIndex);
       api().deleteKey(compareAndSwapKeyIndexFail);
       api().deleteKey(compareAndSwapKeyValue);

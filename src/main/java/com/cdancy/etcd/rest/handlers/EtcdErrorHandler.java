@@ -71,7 +71,7 @@ public class EtcdErrorHandler implements HttpErrorHandler {
             case 412:
                if (command.getCurrentRequest().getMethod().matches("DELETE|PUT")) {
                   if (command.getCurrentRequest().getRequestLine().contains("/keys/")) {
-                     if (message.contains("Compare failed")) {
+                     if (message.contains("Compare failed") || message.contains("Key already exists")) {
                         exception = new IllegalArgumentException(message);
                         break;
                      }

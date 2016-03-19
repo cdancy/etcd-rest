@@ -1,6 +1,6 @@
 {
+    "errorCode": 101,
+    "message": "Key already exists",
     "cause": "/foo",
-    "errorCode": 105,
-    "index": 39776,
-    "message": "Key already exists"
+    "index": 8
 }
