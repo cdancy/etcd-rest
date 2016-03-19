@@ -1,0 +1,15 @@
+{
+    "action": "update",
+    "node": {
+        "createdIndex": 8,
+        "key": "/foo",
+        "modifiedIndex": 9,
+        "value": "world"
+    },
+    "prevNode": {
+        "createdIndex": 8,
+        "key": "/foo",
+        "modifiedIndex": 8,
+        "value": "hello"
+    }
+}

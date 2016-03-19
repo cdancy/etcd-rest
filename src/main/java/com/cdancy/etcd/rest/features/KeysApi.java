@@ -107,6 +107,13 @@ public interface KeysApi {
    @Fallback(KeyOnCompareFailed.class)
    Key compareAndDeleteKey(@PathParam("key") String key, @QueryParam("prevIndex") int prevIndex);
 
+   @Named("keys:compare-and-swap-value")
+   @PUT
+   @Path("/{key}")
+   @Fallback(KeyOnCompareFailed.class)
+   Key compareAndSwapKeyValue(@PathParam("key") String key, @QueryParam("prevValue") String prevValue,
+         @FormParam("value") String value);
+
    @Named("keys:dir-create")
    @PUT
    @FormParams(keys = { "dir" }, values = { "true" })

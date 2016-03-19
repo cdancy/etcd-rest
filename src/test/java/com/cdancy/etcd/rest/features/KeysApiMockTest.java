@@ -317,6 +317,45 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       }
    }
 
+   public void testCompareAndSwapKeyValue() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(
+            new MockResponse().setBody(payloadFromResource("/keys-compare-and-swap-value.json")).setResponseCode(200));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key key = api.compareAndSwapKeyValue("foo", "hello", "world");
+         assertNotNull(key);
+         assertTrue(key.errorCode() == 0);
+         assertTrue(key.action().equals("compareAndSwap"));
+         assertTrue(key.prevNode().value().equals("hello"));
+         assertTrue(key.node().value().equals("world"));
+         assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/foo?prevValue=hello");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
+   public void testCompareAndSwapKeyValueWithWrongValue() throws Exception {
+      MockWebServer server = mockEtcdJavaWebServer();
+
+      server.enqueue(new MockResponse().setBody(payloadFromResource("/keys-compare-and-swap-value-fail.json"))
+            .setResponseCode(412));
+      EtcdApi etcdApi = api(server.getUrl("/"));
+      KeysApi api = etcdApi.keysApi();
+      try {
+         Key failedKey = api.compareAndSwapKeyValue("foo", "hello", "world");
+         assertNotNull(failedKey);
+         assertTrue(failedKey.cause().equals("[hello != world]"));
+         assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/foo?prevValue=hello");
+      } finally {
+         etcdApi.close();
+         server.shutdown();
+      }
+   }
+
    public void testCreateDir() throws Exception {
       MockWebServer server = mockEtcdJavaWebServer();
 

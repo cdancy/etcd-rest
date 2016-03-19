@@ -69,7 +69,7 @@ public class EtcdErrorHandler implements HttpErrorHandler {
                exception = new ResourceAlreadyExistsException(message);
                break;
             case 412:
-               if (command.getCurrentRequest().getMethod().equals("DELETE")) {
+               if (command.getCurrentRequest().getMethod().matches("DELETE|PUT")) {
                   if (command.getCurrentRequest().getRequestLine().contains("/keys/")) {
                      if (message.contains("Compare failed")) {
                         exception = new IllegalArgumentException(message);

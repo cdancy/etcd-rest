@@ -41,6 +41,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    private String compareAndDeleteKeyValueFail;
    private String compareAndDeleteKeyIndex;
    private String compareAndDeleteKeyIndexFail;
+   private String compareAndSwapKeyValue;
+   private String compareAndSwapKeyValueFail;
 
    @BeforeClass
    protected void init() {
@@ -55,6 +57,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       compareAndDeleteKeyValueFail = randomString();
       compareAndDeleteKeyIndex = randomString();
       compareAndDeleteKeyIndexFail = randomString();
+      compareAndSwapKeyValue = randomString();
+      compareAndSwapKeyValueFail = randomString();
    }
 
    @Test
@@ -190,6 +194,33 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    }
 
    @Test
+   public void testCompareAndeSwapKeyValue() {
+      String compareValue = "hello";
+      Key createdKey = api().createKey(compareAndSwapKeyValue, compareValue);
+      assertNotNull(createdKey);
+      assertTrue(createdKey.errorCode() == 0);
+
+      Key key = api().compareAndSwapKeyValue(compareAndSwapKeyValue, compareValue, "world");
+      assertNotNull(key);
+      assertTrue(key.action().equals("compareAndSwap"));
+      assertTrue(key.prevNode().value().equals("hello"));
+      assertTrue(key.node().value().equals("world"));
+   }
+
+   @Test
+   public void testCompareAndeSwapKeyValueFail() {
+      String compareValue = "hello";
+      Key createdKey = api().createKey(compareAndSwapKeyValueFail, compareValue);
+      assertNotNull(createdKey);
+      assertTrue(createdKey.errorCode() == 0);
+
+      Key key = api().compareAndSwapKeyValue(compareAndSwapKeyValueFail, "random", "world");
+      assertNotNull(key);
+      assertTrue(key.errorCode() != 0);
+      assertTrue(key.cause().equals("[random != " + compareValue + "]"));
+   }
+
+   @Test
    public void testWaitKey() {
       String localKey = randomString();
       String localValue = randomString();
@@ -291,6 +322,8 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
 
    @AfterClass
    public void finalize() {
+      api().deleteKey(compareAndSwapKeyValue);
+      api().deleteKey(compareAndSwapKeyValueFail);
       api().deleteKey(compareAndDeleteKeyValue);
       api().deleteKey(compareAndDeleteKeyValueFail);
       api().deleteKey(key);
