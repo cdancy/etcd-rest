@@ -1,0 +1,9 @@
+com.cdancy.etcd.rest
+com.cdancy.etcd.rest.config
+com.cdancy.etcd.rest.domain.keys
+com.cdancy.etcd.rest.domain.members
+com.cdancy.etcd.rest.domain.miscellaneous
+com.cdancy.etcd.rest.domain.statistics
+com.cdancy.etcd.rest.fallbacks
+com.cdancy.etcd.rest.features
+com.cdancy.etcd.rest.handlers
