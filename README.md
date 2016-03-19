@@ -12,6 +12,16 @@ Client's can be built like so:
       .build();
 
       Version version = client.api().miscellaneousApi().version();
+      
+## Latest release
+
+Can be found in either jcenter or maven central.
+
+	<dependency>
+	  <groupId>com.cdancy</groupId>
+	  <artifactId>etcd-rest</artifactId>
+	  <version>0.0.1</version>
+	</dependency>
 
 ## Property based setup
 
