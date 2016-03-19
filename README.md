@@ -41,7 +41,11 @@ Running mock tests can be done like so:
 
 	./gradlew clean build mockTest
 	
-Running integration tests can be done like so (also runs mock tests):
+Running integration tests can be done like so (requires docker):
 
-	./gradlew clean build integTest -PtestEtcdEndpoint=http://127.0.0.1:2379 
+	./gradlew clean build integTest
+	
+Running integration tests without invoking docker can be done like so:
+
+	./gradlew clean build integTest -PbootstrapDocker=false -PtestEtcdEndpoint=http://127.0.0.1:2379 
 	
