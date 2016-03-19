@@ -50,6 +50,7 @@ bintray {
     user = project.bintrayUsername
     key = project.bintrayKey
     publications = ['mavenJava']
+    publish = true
 
     pkg {
         repo = 'etcd-rest'
@@ -61,6 +62,8 @@ bintray {
         licenses = ['Apache-2.0']
         labels = ['java', 'etcd', 'client', 'rest']
         publicDownloadNumbers = true
+        githubRepo = "cdancy/${project.name}"
+        githubReleaseNotesFile = 'RELEASE_NOTES.md'
 
         version {
         	released  = new Date()
