@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
     }
 }
 
@@ -36,22 +36,23 @@ publishing {
                 license.appendNode('distribution', 'repo')
 
                 def developers = root.appendNode('developers')
-                def bmuschko = developers.appendNode('developer')
-                bmuschko.appendNode('id', 'cdancy')
-                bmuschko.appendNode('name', 'Christopher Dancy')
-                bmuschko.appendNode('email', 'christoforever@gmail.com')
+                def cdancy = developers.appendNode('developer')
+                cdancy.appendNode('id', 'cdancy')
+                cdancy.appendNode('name', 'Christopher Dancy')
+                cdancy.appendNode('email', 'christoforever@gmail.com')
             }
         }
     }
 }
 
 bintray {
-    user = resolveProperty('BINTRAY_USER', 'bintrayUser')
-    key = resolveProperty('BINTRAY_KEY', 'bintrayKey')
+
+    user = project.bintrayUsername
+    key = project.bintrayKey
     publications = ['mavenJava']
 
     pkg {
-        repo = 'cdancy'
+        repo = 'etcd-rest'
         name = 'etcd-rest'
         desc = 'Java client for working with Etcd REST API.'
         websiteUrl = "https://github.com/cdancy/${project.name}"
@@ -62,7 +63,8 @@ bintray {
         publicDownloadNumbers = true
 
         version {
-            vcsTag = "v$project.version"
+        	released  = new Date()
+            vcsTag = "v${project.version}"
             attributes = ['etcd-rest': ["${project.group}:${project.name}:${project.version}"]]
 
             gpg {
