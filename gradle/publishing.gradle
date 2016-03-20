@@ -53,7 +53,7 @@ bintray {
     publish = true
 
     pkg {
-        repo = 'etcd-rest'
+        repo = 'java-libraries'
         name = 'etcd-rest'
         desc = 'Java client for working with Etcd REST API.'
         websiteUrl = "https://github.com/cdancy/${project.name}"
