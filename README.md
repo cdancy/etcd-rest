@@ -61,7 +61,5 @@ Running integration tests without invoking docker can be done like so:
 	
 # Additional Resources
 
-* [Etcd documentation](https://help.github.com/)
-* [GitHub pull request documentation](https://help.github.com/send-pull-requests/)
+* [Etcd REST API](https://github.com/coreos/etcd/blob/master/Documentation/api.md)
 
-	
