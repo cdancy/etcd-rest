@@ -15,41 +15,31 @@
  * limitations under the License.
  */
 
-package com.cdancy.etcd.rest.domain.members;
-
-import java.util.List;
+package com.cdancy.etcd.rest.domain.keys;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
-import com.cdancy.etcd.rest.domain.keys.ErrorMessage;
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableList;
 
 @AutoValue
-public abstract class Member {
+public abstract class ErrorMessage {
+
+   public abstract int errorCode();
 
    @Nullable
-   public abstract String id();
+   public abstract String message();
 
    @Nullable
-   public abstract String name();
+   public abstract String cause();
 
-   public abstract List<String> peerURLs();
+   public abstract int index();
 
-   public abstract List<String> clientURLs();
-
-   @Nullable
-   public abstract ErrorMessage errorMessage();
-
-   Member() {
+   ErrorMessage() {
    }
 
-   @SerializedNames({ "id", "name", "peerURLs", "clientURLs", "message" })
-   public static Member create(String id, String name, List<String> peerURLs, List<String> clientURLs,
-         ErrorMessage errorMessage) {
-      return new AutoValue_Member(id, name,
-            peerURLs != null ? ImmutableList.copyOf(peerURLs) : ImmutableList.<String> of(),
-            clientURLs != null ? ImmutableList.copyOf(clientURLs) : ImmutableList.<String> of(), errorMessage);
+   @SerializedNames({ "errorCode", "message", "cause", "index" })
+   public static ErrorMessage create(int errorCode, String message, String cause, int index) {
+      return new AutoValue_ErrorMessage(errorCode, message, cause, index);
    }
 }

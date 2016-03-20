@@ -59,3 +59,9 @@ Running integration tests without invoking docker can be done like so:
 
 	./gradlew clean build integTest -PbootstrapDocker=false -PtestEtcdEndpoint=http://127.0.0.1:2379 
 	
+# Additional Resources
+
+* [Etcd documentation](https://help.github.com/)
+* [GitHub pull request documentation](https://help.github.com/send-pull-requests/)
+
+	

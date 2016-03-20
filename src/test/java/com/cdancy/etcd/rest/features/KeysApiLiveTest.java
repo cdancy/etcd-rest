@@ -87,7 +87,7 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
 
       createdKey = api().getKey(localKey);
       assertNotNull(createdKey);
-      assertTrue(createdKey.message().equals("Key not found"));
+      assertTrue(createdKey.errorMessage().message().equals("Key not found"));
    }
 
    @Test
@@ -143,14 +143,14 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    public void testGetNonExistentKey() {
       Key deletedKey = api().getKey(randomString());
       assertNotNull(deletedKey);
-      assertTrue(deletedKey.message().equals("Key not found"));
+      assertTrue(deletedKey.errorMessage().message().equals("Key not found"));
    }
 
    @Test
    public void testDeleteNonExistentKey() {
       Key deletedKey = api().deleteKey(randomString());
       assertNotNull(deletedKey);
-      assertTrue(deletedKey.message().equals("Key not found"));
+      assertTrue(deletedKey.errorMessage().message().equals("Key not found"));
    }
 
    @Test
@@ -173,7 +173,7 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
 
       Key failedComparison = api().compareAndDeleteKey(compareAndDeleteKeyValueFail, "random");
       assertNotNull(failedComparison);
-      assertTrue(failedComparison.cause().equals("[random != world]"));
+      assertTrue(failedComparison.errorMessage().cause().equals("[random != world]"));
    }
 
    @Test
@@ -198,7 +198,7 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       int wrongIndex = createdKey.node().createdIndex() + 1;
       Key failedComparison = api().compareAndDeleteKey(compareAndDeleteKeyIndexFail, wrongIndex);
       assertNotNull(failedComparison);
-      assertTrue(failedComparison.cause().equals("[" + wrongIndex + " != " + correctIndex + "]"));
+      assertTrue(failedComparison.errorMessage().cause().equals("[" + wrongIndex + " != " + correctIndex + "]"));
    }
 
    @Test
@@ -206,7 +206,7 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       String compareValue = "hello";
       Key createdKey = api().createKey(compareAndSwapKeyValue, compareValue);
       assertNotNull(createdKey);
-      assertTrue(createdKey.errorCode() == 0);
+      assertTrue(createdKey.errorMessage() == null);
 
       Key key = api().compareAndSwapKeyValue(compareAndSwapKeyValue, compareValue, "world");
       assertNotNull(key);
@@ -220,12 +220,11 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       String compareValue = "hello";
       Key createdKey = api().createKey(compareAndSwapKeyValueFail, compareValue);
       assertNotNull(createdKey);
-      assertTrue(createdKey.errorCode() == 0);
+      assertTrue(createdKey.errorMessage() == null);
 
       Key key = api().compareAndSwapKeyValue(compareAndSwapKeyValueFail, "random", "world");
       assertNotNull(key);
-      assertTrue(key.errorCode() != 0);
-      assertTrue(key.cause().equals("[random != " + compareValue + "]"));
+      assertTrue(key.errorMessage().cause().equals("[random != " + compareValue + "]"));
    }
 
    @Test
@@ -233,7 +232,7 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       String compareValue = "hello";
       Key createdKey = api().createKey(compareAndSwapKeyIndex, compareValue);
       assertNotNull(createdKey);
-      assertTrue(createdKey.errorCode() == 0);
+      assertTrue(createdKey.errorMessage() == null);
 
       Key key = api().compareAndSwapKeyIndex(compareAndSwapKeyIndex, createdKey.node().createdIndex(), "world");
       assertNotNull(key);
@@ -247,14 +246,13 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       String compareValue = "hello";
       Key createdKey = api().createKey(compareAndSwapKeyIndexFail, compareValue);
       assertNotNull(createdKey);
-      assertTrue(createdKey.errorCode() == 0);
+      assertTrue(createdKey.errorMessage() == null);
 
       int goodIndex = createdKey.node().createdIndex();
       int badIndex = createdKey.node().createdIndex() + 1;
       Key key = api().compareAndSwapKeyIndex(compareAndSwapKeyIndexFail, badIndex, "world");
       assertNotNull(key);
-      assertTrue(key.errorCode() != 0);
-      assertTrue(key.cause().equals("[" + badIndex + " != " + goodIndex + "]"));
+      assertTrue(key.errorMessage().cause().equals("[" + badIndex + " != " + goodIndex + "]"));
    }
 
    @Test
@@ -262,7 +260,7 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       String compareValue = "hello";
       Key createdKey = api().createKey(compareAndSwapKeyExist, compareValue);
       assertNotNull(createdKey);
-      assertTrue(createdKey.errorCode() == 0);
+      assertTrue(createdKey.errorMessage() == null);
 
       Key key = api().compareAndSwapKeyExist(compareAndSwapKeyExist, true, "world");
       assertNotNull(key);
@@ -276,12 +274,11 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
       String compareValue = "hello";
       Key createdKey = api().createKey(compareAndSwapKeyExistFail, compareValue);
       assertNotNull(createdKey);
-      assertTrue(createdKey.errorCode() == 0);
+      assertTrue(createdKey.errorMessage() == null);
 
       Key key = api().compareAndSwapKeyExist(compareAndSwapKeyExistFail, false, "world");
       assertNotNull(key);
-      assertTrue(key.errorCode() != 0);
-      assertTrue(key.message().equals("Key already exists"));
+      assertTrue(key.errorMessage().message().equals("Key already exists"));
    }
 
    @Test
@@ -331,7 +328,7 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    public void testCreateDirAlreadyExists() {
       Key key = api().createDir(dir);
       assertNotNull(key);
-      assertTrue(key.message().equals("Not a file"));
+      assertTrue(key.errorMessage().message().equals("Not a file"));
    }
 
    @Test(dependsOnMethods = "testCreateDirAlreadyExists")
@@ -356,7 +353,7 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
    public void testListDirNonExistent() {
       Key key = api().listDir(randomString(), true);
       assertNotNull(key);
-      assertTrue(key.message().equals("Key not found"));
+      assertTrue(key.errorMessage().message().equals("Key not found"));
    }
 
    @Test
@@ -374,14 +371,14 @@ public class KeysApiLiveTest extends BaseEtcdApiLiveTest {
 
       Key nonExistentDir = api().listDir(dirWithTTL, true);
       assertNotNull(nonExistentDir);
-      assertTrue(nonExistentDir.message().equals("Key not found"));
+      assertTrue(nonExistentDir.errorMessage().message().equals("Key not found"));
    }
 
    @Test
    public void testDeleteDirNonExistent() {
       Key key = api().deleteDir(randomString());
       assertNotNull(key);
-      assertTrue(key.message().equals("Key not found"));
+      assertTrue(key.errorMessage().message().equals("Key not found"));
    }
 
    @AfterClass

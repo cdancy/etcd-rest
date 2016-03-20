@@ -34,22 +34,14 @@ public abstract class Key {
    @Nullable
    public abstract Node prevNode();
 
-   public abstract int errorCode();
-
    @Nullable
-   public abstract String message();
-
-   @Nullable
-   public abstract String cause();
-
-   public abstract int index();
+   public abstract ErrorMessage errorMessage();
 
    Key() {
    }
 
-   @SerializedNames({ "action", "node", "prevNode", "errorCode", "message", "cause", "index" })
-   public static Key create(String action, Node node, Node prevNode, int errorCode, String message, String cause,
-         int index) {
-      return new AutoValue_Key(action, node, prevNode, errorCode, message, cause, index);
+   @SerializedNames({ "action", "node", "prevNode", "errorMessage" })
+   public static Key create(String action, Node node, Node prevNode, ErrorMessage errorMessage) {
+      return new AutoValue_Key(action, node, prevNode, errorMessage);
    }
 }

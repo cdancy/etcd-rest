@@ -88,7 +88,7 @@ public class MembersApiMockTest extends BaseEtcdMockTest {
          String peerURL = "htp:/hello/world:11bye";
          Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
          assertNotNull(member);
-         assertTrue(member.message().startsWith("URL scheme must be http or https"));
+         assertTrue(member.errorMessage().message().startsWith("URL scheme must be http or https"));
          assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
       } finally {
          etcdApi.close();
@@ -108,7 +108,7 @@ public class MembersApiMockTest extends BaseEtcdMockTest {
          String peerURL = "http://www.google.com";
          Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
          assertNotNull(member);
-         assertTrue(member.message().startsWith("URL address does not have the form"));
+         assertTrue(member.errorMessage().message().startsWith("URL address does not have the form"));
          assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
       } finally {
          etcdApi.close();
@@ -128,7 +128,7 @@ public class MembersApiMockTest extends BaseEtcdMockTest {
          String peerURL = "http://10.0.0.10:2380";
          Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
          assertNotNull(member);
-         assertTrue(member.message().startsWith("etcdserver: ID exists"));
+         assertTrue(member.errorMessage().message().startsWith("etcdserver: ID exists"));
          assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
       } finally {
          etcdApi.close();

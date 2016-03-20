@@ -126,7 +126,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key createdKey = api.listInOrderKey("hello");
          assertNotNull(createdKey);
-         assertTrue(createdKey.message().equals("Key not found"));
+         assertTrue(createdKey.errorMessage().message().equals("Key not found"));
          assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello?recursive=true&sorted=true");
       } finally {
          etcdApi.close();
@@ -162,7 +162,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key nonExistentKey = api.getKey("NonExistentKeyToGet");
          assertNotNull(nonExistentKey);
-         assertTrue(nonExistentKey.message().equals("Key not found"));
+         assertTrue(nonExistentKey.errorMessage().message().equals("Key not found"));
          assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/keys/NonExistentKeyToGet");
       } finally {
          etcdApi.close();
@@ -197,7 +197,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key nonExistentKey = api.deleteKey("NonExistentKeyToDelete");
          assertNotNull(nonExistentKey);
-         assertTrue(nonExistentKey.message().equals("Key not found"));
+         assertTrue(nonExistentKey.errorMessage().message().equals("Key not found"));
          assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/keys/NonExistentKeyToDelete");
       } finally {
          etcdApi.close();
@@ -271,7 +271,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key failedKey = api.compareAndDeleteKey("hello", "world");
          assertNotNull(failedKey);
-         assertTrue(failedKey.message().equals("Compare failed"));
+         assertTrue(failedKey.errorMessage().message().equals("Compare failed"));
          assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello?prevValue=world");
       } finally {
          etcdApi.close();
@@ -309,7 +309,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key failedKey = api.compareAndDeleteKey("hello", 1);
          assertNotNull(failedKey);
-         assertTrue(failedKey.cause().equals("[1 != 8]"));
+         assertTrue(failedKey.errorMessage().cause().equals("[1 != 8]"));
          assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello?prevIndex=1");
       } finally {
          etcdApi.close();
@@ -327,7 +327,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key key = api.compareAndSwapKeyValue("foo", "hello", "world");
          assertNotNull(key);
-         assertTrue(key.errorCode() == 0);
+         assertTrue(key.errorMessage() == null);
          assertTrue(key.action().equals("compareAndSwap"));
          assertTrue(key.prevNode().value().equals("hello"));
          assertTrue(key.node().value().equals("world"));
@@ -348,7 +348,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key failedKey = api.compareAndSwapKeyValue("foo", "hello", "world");
          assertNotNull(failedKey);
-         assertTrue(failedKey.cause().equals("[hello != world]"));
+         assertTrue(failedKey.errorMessage().cause().equals("[hello != world]"));
          assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/foo?prevValue=hello");
       } finally {
          etcdApi.close();
@@ -366,7 +366,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key key = api.compareAndSwapKeyIndex("foo", 8, "world");
          assertNotNull(key);
-         assertTrue(key.errorCode() == 0);
+         assertTrue(key.errorMessage() == null);
          assertTrue(key.action().equals("compareAndSwap"));
          assertTrue(key.prevNode().value().equals("hello"));
          assertTrue(key.node().value().equals("world"));
@@ -387,7 +387,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key failedKey = api.compareAndSwapKeyIndex("foo", 1, "world");
          assertNotNull(failedKey);
-         assertTrue(failedKey.cause().equals("[1 != 8]"));
+         assertTrue(failedKey.errorMessage().cause().equals("[1 != 8]"));
          assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/foo?prevIndex=1");
       } finally {
          etcdApi.close();
@@ -405,7 +405,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key key = api.compareAndSwapKeyExist("foo", true, "world");
          assertNotNull(key);
-         assertTrue(key.errorCode() == 0);
+         assertTrue(key.errorMessage() == null);
          assertTrue(key.action().equals("update"));
          assertTrue(key.prevNode().value().equals("hello"));
          assertTrue(key.node().value().equals("world"));
@@ -426,7 +426,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key failedKey = api.compareAndSwapKeyExist("foo", false, "world");
          assertNotNull(failedKey);
-         assertTrue(failedKey.message().equals("Key already exists"));
+         assertTrue(failedKey.errorMessage().message().equals("Key already exists"));
          assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/keys/foo?prevExist=false");
       } finally {
          etcdApi.close();
@@ -464,7 +464,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key key = api.createDir("hello");
          assertNotNull(key);
-         assertTrue(key.message().equals("Not a file"));
+         assertTrue(key.errorMessage().message().equals("Not a file"));
       } finally {
          etcdApi.close();
          server.shutdown();
@@ -520,7 +520,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key createdKey = api.listDir("hello", true);
          assertNotNull(createdKey);
-         assertTrue(createdKey.message().equals("Key not found"));
+         assertTrue(createdKey.errorMessage().message().equals("Key not found"));
          assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello/?recursive=true");
       } finally {
          etcdApi.close();
@@ -557,7 +557,7 @@ public class KeysApiMockTest extends BaseEtcdMockTest {
       try {
          Key createdKey = api.deleteDir("hello");
          assertNotNull(createdKey);
-         assertTrue(createdKey.message().equals("Key not found"));
+         assertTrue(createdKey.errorMessage().message().equals("Key not found"));
          assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/keys/hello/?recursive=true");
       } finally {
          etcdApi.close();

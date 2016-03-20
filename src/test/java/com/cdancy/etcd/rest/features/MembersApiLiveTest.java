@@ -86,14 +86,14 @@ public class MembersApiLiveTest extends BaseEtcdApiLiveTest {
    public void testAddMemberWithMalformedURL() {
       Member member = api().add(CreateMember.create(null, ImmutableList.of("htp:/hello/world:11bye"), null));
       assertNotNull(member);
-      assertTrue(member.message().startsWith("URL scheme must be http or https"));
+      assertTrue(member.errorMessage().message().startsWith("URL scheme must be http or https"));
    }
 
    @Test
    public void testAddMemberWithIllegalFormat() {
       Member member = api().add(CreateMember.create(null, ImmutableList.of("http://www.google.com"), null));
       assertNotNull(member);
-      assertTrue(member.message().startsWith("URL address does not have the form"));
+      assertTrue(member.errorMessage().message().startsWith("URL address does not have the form"));
    }
 
    @Test(dependsOnMethods = "testAddMemberWithIllegalFormat")

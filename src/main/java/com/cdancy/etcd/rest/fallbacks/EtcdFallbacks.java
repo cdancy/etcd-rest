@@ -23,6 +23,7 @@ import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 
 import org.jclouds.Fallback;
 
+import com.cdancy.etcd.rest.domain.keys.ErrorMessage;
 import com.cdancy.etcd.rest.domain.keys.Key;
 import com.cdancy.etcd.rest.domain.members.Member;
 import com.google.gson.JsonElement;
@@ -85,13 +86,15 @@ public final class EtcdFallbacks {
    public static Key createKeyFromErrorMessage(String message) {
       JsonElement element = parser.parse(message);
       JsonObject object = element.getAsJsonObject();
-      return Key.create(null, null, null, object.get("errorCode").getAsInt(), object.get("message").getAsString(),
+      ErrorMessage error = ErrorMessage.create(object.get("errorCode").getAsInt(), object.get("message").getAsString(),
             object.get("cause").getAsString(), object.get("index").getAsInt());
+      return Key.create(null, null, null, error);
    }
 
    public static Member createMemberFromErrorMessage(String message) {
       JsonElement element = parser.parse(message);
       JsonObject object = element.getAsJsonObject();
-      return Member.create(null, null, null, null, object.get("message").getAsString());
+      ErrorMessage error = ErrorMessage.create(-1, object.get("message").getAsString(), null, -1);
+      return Member.create(null, null, null, null, error);
    }
 }
