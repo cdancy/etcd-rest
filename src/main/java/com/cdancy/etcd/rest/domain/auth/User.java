@@ -15,7 +15,11 @@
  * limitations under the License.
  */
 
-package com.cdancy.etcd.rest.domain.keys;
+package com.cdancy.etcd.rest.domain.auth;
+
+import java.util.List;
+
+import javax.management.relation.Role;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
@@ -23,26 +27,26 @@ import org.jclouds.json.SerializedNames;
 import com.cdancy.etcd.rest.error.ErrorMessage;
 import com.google.auto.value.AutoValue;
 
+import autovalue.shaded.com.google.common.common.collect.ImmutableList;
+
 @AutoValue
-public abstract class Key {
+public abstract class User {
 
-   @Nullable
-   public abstract String action();
+   public abstract String user();
 
-   @Nullable
-   public abstract Node node();
+   public abstract String password();
 
-   @Nullable
-   public abstract Node prevNode();
+   public abstract List<Role> roles();
 
    @Nullable
    public abstract ErrorMessage errorMessage();
 
-   Key() {
+   User() {
    }
 
-   @SerializedNames({ "action", "node", "prevNode", "errorMessage" })
-   public static Key create(String action, Node node, Node prevNode, ErrorMessage errorMessage) {
-      return new AutoValue_Key(action, node, prevNode, errorMessage);
+   @SerializedNames({ "user", "password", "roles", "errorMessage" })
+   public static User create(String user, String password, List<Role> roles, ErrorMessage errorMessage) {
+      return new AutoValue_User(user, password, roles != null ? ImmutableList.copyOf(roles) : ImmutableList.<Role> of(),
+            errorMessage);
    }
 }

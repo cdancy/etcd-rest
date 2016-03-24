@@ -15,34 +15,28 @@
  * limitations under the License.
  */
 
-package com.cdancy.etcd.rest.domain.keys;
+package com.cdancy.etcd.rest.domain.auth;
 
-import org.jclouds.javax.annotation.Nullable;
+import java.util.List;
+
 import org.jclouds.json.SerializedNames;
 
-import com.cdancy.etcd.rest.error.ErrorMessage;
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 
 @AutoValue
-public abstract class Key {
+public abstract class KeyValue {
 
-   @Nullable
-   public abstract String action();
+   public abstract List<String> read();
 
-   @Nullable
-   public abstract Node node();
+   public abstract List<String> write();
 
-   @Nullable
-   public abstract Node prevNode();
-
-   @Nullable
-   public abstract ErrorMessage errorMessage();
-
-   Key() {
+   KeyValue() {
    }
 
-   @SerializedNames({ "action", "node", "prevNode", "errorMessage" })
-   public static Key create(String action, Node node, Node prevNode, ErrorMessage errorMessage) {
-      return new AutoValue_Key(action, node, prevNode, errorMessage);
+   @SerializedNames({ "read", "write" })
+   public static KeyValue create(List<String> read, List<String> write) {
+      return new AutoValue_KeyValue(read != null ? ImmutableList.copyOf(read) : ImmutableList.<String> of(),
+            write != null ? ImmutableList.copyOf(write) : ImmutableList.<String> of());
    }
 }

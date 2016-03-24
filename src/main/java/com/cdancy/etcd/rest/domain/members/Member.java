@@ -22,7 +22,7 @@ import java.util.List;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
-import com.cdancy.etcd.rest.domain.keys.ErrorMessage;
+import com.cdancy.etcd.rest.error.ErrorMessage;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 

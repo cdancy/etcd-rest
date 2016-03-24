@@ -21,12 +21,17 @@ import java.io.Closeable;
 
 import org.jclouds.rest.annotations.Delegate;
 
+import com.cdancy.etcd.rest.features.AuthApi;
 import com.cdancy.etcd.rest.features.KeysApi;
 import com.cdancy.etcd.rest.features.MembersApi;
 import com.cdancy.etcd.rest.features.MiscellaneousApi;
+import com.cdancy.etcd.rest.features.RolesApi;
 import com.cdancy.etcd.rest.features.StatisticsApi;
 
 public interface EtcdApi extends Closeable {
+
+   @Delegate
+   AuthApi authApi();
 
    @Delegate
    KeysApi keysApi();
@@ -36,6 +41,9 @@ public interface EtcdApi extends Closeable {
 
    @Delegate
    MiscellaneousApi miscellaneousApi();
+
+   @Delegate
+   RolesApi rolesApi();
 
    @Delegate
    StatisticsApi statisticsApi();

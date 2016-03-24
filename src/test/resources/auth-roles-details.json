@@ -1,0 +1,13 @@
+{  
+   "role":"fleet",
+   "permissions":{  
+      "kv":{  
+         "read":[  
+            "/fleet/"
+         ],
+         "write":[  
+            "/fleet/"
+         ]
+      }
+   }
+}

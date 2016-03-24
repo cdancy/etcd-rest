@@ -15,34 +15,31 @@
  * limitations under the License.
  */
 
-package com.cdancy.etcd.rest.domain.keys;
+package com.cdancy.etcd.rest.error;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
-import com.cdancy.etcd.rest.error.ErrorMessage;
 import com.google.auto.value.AutoValue;
 
 @AutoValue
-public abstract class Key {
+public abstract class ErrorMessage {
+
+   public abstract int errorCode();
 
    @Nullable
-   public abstract String action();
+   public abstract String message();
 
    @Nullable
-   public abstract Node node();
+   public abstract String cause();
 
-   @Nullable
-   public abstract Node prevNode();
+   public abstract int index();
 
-   @Nullable
-   public abstract ErrorMessage errorMessage();
-
-   Key() {
+   ErrorMessage() {
    }
 
-   @SerializedNames({ "action", "node", "prevNode", "errorMessage" })
-   public static Key create(String action, Node node, Node prevNode, ErrorMessage errorMessage) {
-      return new AutoValue_Key(action, node, prevNode, errorMessage);
+   @SerializedNames({ "errorCode", "message", "cause", "index" })
+   public static ErrorMessage create(int errorCode, String message, String cause, int index) {
+      return new AutoValue_ErrorMessage(errorCode, message, cause, index);
    }
 }

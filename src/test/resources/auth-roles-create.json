@@ -1,0 +1,13 @@
+{  
+   "role":"rkt",
+   "permissions":{  
+      "kv":{  
+         "read":[  
+            "*"
+         ],
+         "write":[  
+            "*"
+         ]
+      }
+   }
+}

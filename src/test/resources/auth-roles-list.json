@@ -1,0 +1,7 @@
+{  
+   "roles":[  
+      "etcd",
+      "fleet",
+      "quay"
+   ]
+}
