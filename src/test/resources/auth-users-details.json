@@ -1,0 +1,31 @@
+{  
+   "user":"alice",
+   "roles":[  
+      {  
+         "role":"fleet",
+         "permissions":{  
+            "kv":{  
+               "read":[  
+                  "/fleet/"
+               ],
+               "write":[  
+                  "/fleet/"
+               ]
+            }
+         }
+      },
+      {  
+         "role":"etcd",
+         "permissions":{  
+            "kv":{  
+               "read":[  
+                  "*"
+               ],
+               "write":[  
+                  "*"
+               ]
+            }
+         }
+      }
+   ]
+}

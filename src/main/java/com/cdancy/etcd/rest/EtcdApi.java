@@ -27,6 +27,7 @@ import com.cdancy.etcd.rest.features.MembersApi;
 import com.cdancy.etcd.rest.features.MiscellaneousApi;
 import com.cdancy.etcd.rest.features.RolesApi;
 import com.cdancy.etcd.rest.features.StatisticsApi;
+import com.cdancy.etcd.rest.features.UsersApi;
 
 public interface EtcdApi extends Closeable {
 
@@ -47,4 +48,7 @@ public interface EtcdApi extends Closeable {
 
    @Delegate
    StatisticsApi statisticsApi();
+
+   @Delegate
+   UsersApi usersApi();
 }

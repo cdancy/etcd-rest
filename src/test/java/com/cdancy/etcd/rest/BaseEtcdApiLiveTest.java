@@ -23,7 +23,6 @@ import org.jclouds.Constants;
 import org.jclouds.apis.BaseApiLiveTest;
 import org.testng.annotations.Test;
 
-import com.cdancy.etcd.rest.EtcdApi;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 

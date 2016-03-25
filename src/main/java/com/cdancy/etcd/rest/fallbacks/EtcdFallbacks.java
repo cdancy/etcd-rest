@@ -28,6 +28,7 @@ import org.jclouds.Fallback;
 
 import com.cdancy.etcd.rest.domain.auth.AuthState;
 import com.cdancy.etcd.rest.domain.auth.Role;
+import com.cdancy.etcd.rest.domain.auth.User;
 import com.cdancy.etcd.rest.domain.keys.Key;
 import com.cdancy.etcd.rest.domain.members.Member;
 import com.cdancy.etcd.rest.error.ErrorMessage;
@@ -107,6 +108,32 @@ public final class EtcdFallbacks {
             }
          }
          throw propagate(t);
+      }
+   }
+
+   public static final class UserOnAlreadyExists implements Fallback<Object> {
+      public Object createOrPropagate(Throwable t) throws Exception {
+         if (checkNotNull(t, "throwable") != null && (t.getMessage().contains("already exists"))) {
+            User user = createUserFromErrorMessage(t.getMessage());
+            if (user != null) {
+               return user;
+            }
+         }
+         throw propagate(t);
+      }
+   }
+
+   public static User createUserFromErrorMessage(String message) {
+      JsonElement element = parser.parse(message);
+      JsonObject object = element.getAsJsonObject();
+      ErrorMessage error = ErrorMessage.create(-1, object.get("message").getAsString(), null, -1);
+
+      Pattern pattern = Pattern.compile(".*User (.+) already exists.*");
+      Matcher matcher = pattern.matcher(error.message());
+      if (matcher.find() && matcher.groupCount() == 1) {
+         return User.create(matcher.group(1), null, error);
+      } else {
+         return null;
       }
    }
 

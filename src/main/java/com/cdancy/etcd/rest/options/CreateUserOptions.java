@@ -15,34 +15,38 @@
  * limitations under the License.
  */
 
-package com.cdancy.etcd.rest.domain.auth;
+package com.cdancy.etcd.rest.options;
 
 import java.util.List;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
-import com.cdancy.etcd.rest.error.ErrorMessage;
 import com.google.auto.value.AutoValue;
 
 import autovalue.shaded.com.google.common.common.collect.ImmutableList;
 
 @AutoValue
-public abstract class User {
+public abstract class CreateUserOptions {
 
    public abstract String user();
 
+   public abstract String password();
+
    public abstract List<String> roles();
 
-   @Nullable
-   public abstract ErrorMessage errorMessage();
+   public abstract List<String> grant();
 
-   User() {
+   public abstract List<String> revoke();
+
+   CreateUserOptions() {
    }
 
-   @SerializedNames({ "user", "roles", "errorMessage" })
-   public static User create(String user, List<String> roles, ErrorMessage errorMessage) {
-      return new AutoValue_User(user, roles != null ? ImmutableList.copyOf(roles) : ImmutableList.<String> of(),
-            errorMessage);
+   @SerializedNames({ "user", "password", "roles", "grant", "revoke" })
+   public static CreateUserOptions create(String user, String password, List<String> roles, List<String> grant,
+         List<String> revoke) {
+      return new AutoValue_CreateUserOptions(user, password,
+            roles != null ? ImmutableList.copyOf(roles) : ImmutableList.<String> of(),
+            grant != null ? ImmutableList.copyOf(grant) : ImmutableList.<String> of(),
+            revoke != null ? ImmutableList.copyOf(revoke) : ImmutableList.<String> of());
    }
 }
