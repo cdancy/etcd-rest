@@ -32,12 +32,15 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
 
 import com.cdancy.etcd.rest.domain.keys.Key;
 import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.KeyOnAlreadyExists;
 import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.KeyOnCompareFailed;
 import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.KeyOnNonFound;
+import com.cdancy.etcd.rest.filters.EtcdAuthentication;
 
+@RequestFilters(EtcdAuthentication.class)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/{jclouds.api-version}/keys")
 public interface KeysApi {

@@ -31,13 +31,16 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.cdancy.etcd.rest.domain.members.CreateMember;
 import com.cdancy.etcd.rest.domain.members.Member;
 import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.MemberOnIllegalRequest;
+import com.cdancy.etcd.rest.filters.EtcdAuthentication;
 
+@RequestFilters(EtcdAuthentication.class)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/{jclouds.api-version}/members")
 public interface MembersApi {

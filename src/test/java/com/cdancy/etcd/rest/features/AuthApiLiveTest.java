@@ -16,22 +16,22 @@
  */
 package com.cdancy.etcd.rest.features;
 
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
 import com.cdancy.etcd.rest.BaseEtcdApiLiveTest;
-import com.cdancy.etcd.rest.EtcdClient;
-import com.cdancy.etcd.rest.domain.miscellaneous.Version;
 
-@Test(groups = "live", testName = "EtcdClientLiveTest")
-public class EtcdClientLiveTest extends BaseEtcdApiLiveTest {
+@Test(testName = "AuthApiLiveTest", singleThreaded = true)
+public class AuthApiLiveTest extends BaseEtcdApiLiveTest {
 
    @Test
-   public void testCreateClient() {
-      EtcdClient client = new EtcdClient.Builder().endPoint(this.endpoint).build();
+   public void testIsEnabled() {
+      boolean enabled = api().isEnabled();
+      assertTrue(enabled == true || enabled == false);
+   }
 
-      Version version = client.api().miscellaneousApi().version();
-      assertNotNull(version);
+   private AuthApi api() {
+      return api.authApi();
    }
 }

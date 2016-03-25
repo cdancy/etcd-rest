@@ -42,7 +42,7 @@ public class EtcdClient {
          if ((endPoint = retrivePropertyValue("EtcdApi.rest.endpoint")) == null) {
             if ((endPoint = retrivePropertyValue("etcdRestEndpoint")) == null) {
                if ((endPoint = retrivePropertyValue("ETCD_REST_ENDPOINT")) == null) {
-                  endPoint = "http://127.0.0.1:8080";
+                  endPoint = "http://127.0.0.1:2379";
                   System.out.println("Etcd REST endpoint was not found. Defaulting to: " + endPoint);
                }
             }
@@ -54,8 +54,8 @@ public class EtcdClient {
          if ((credentials = retrivePropertyValue("etcd.rest.credentials")) == null) {
             if ((credentials = retrivePropertyValue("etcdRestCredentials")) == null) {
                if ((credentials = retrivePropertyValue("ETCD_REST_CREDENTIALS")) == null) {
-                  credentials = "admin:password";
-                  System.out.println("Etcd REST credentials was not found. Defaulting to: " + credentials);
+                  credentials = "";
+                  System.out.println("Etcd REST credentials was not found. Assuming anonymous usage.");
                }
             }
          }

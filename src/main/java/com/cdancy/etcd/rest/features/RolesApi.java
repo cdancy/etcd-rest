@@ -32,12 +32,15 @@ import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.cdancy.etcd.rest.domain.auth.Role;
 import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.RoleOnAlreadyExists;
+import com.cdancy.etcd.rest.filters.EtcdAuthentication;
 
+@RequestFilters(EtcdAuthentication.class)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/{jclouds.api-version}/auth/roles")
 public interface RolesApi {
@@ -51,7 +54,7 @@ public interface RolesApi {
    @Named("auth-role:list")
    @SelectJson("roles")
    @GET
-   List<String> list();
+   List<Role> list();
 
    @Named("auth-role:get")
    @Path("/{role}")

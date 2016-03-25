@@ -24,11 +24,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 
 import com.cdancy.etcd.rest.domain.miscellaneous.Version;
 import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.FalseOn503;
+import com.cdancy.etcd.rest.filters.EtcdAuthentication;
 
+@RequestFilters(EtcdAuthentication.class)
 public interface MiscellaneousApi {
 
    @Named("miscellaneous:version")

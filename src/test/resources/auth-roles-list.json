@@ -1,7 +1,43 @@
 {  
    "roles":[  
-      "etcd",
-      "fleet",
-      "quay"
+      {  
+         "role":"fleet",
+         "permissions":{  
+            "kv":{  
+               "read":[  
+                  "/fleet/"
+               ],
+               "write":[  
+                  "/fleet/"
+               ]
+            }
+         }
+      },
+      {  
+         "role":"etcd",
+         "permissions":{  
+            "kv":{  
+               "read":[  
+                  "*"
+               ],
+               "write":[  
+                  "*"
+               ]
+            }
+         }
+      },
+      {  
+         "role":"quay",
+         "permissions":{  
+            "kv":{  
+               "read":[  
+                  "*"
+               ],
+               "write":[  
+                  "*"
+               ]
+            }
+         }
+      }
    ]
 }

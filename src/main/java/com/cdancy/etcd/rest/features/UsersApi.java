@@ -32,13 +32,17 @@ import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.cdancy.etcd.rest.domain.auth.User;
+import com.cdancy.etcd.rest.domain.auth.UserDetails;
 import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.UserOnAlreadyExists;
+import com.cdancy.etcd.rest.filters.EtcdAuthentication;
 import com.cdancy.etcd.rest.options.CreateUserOptions;
 
+@RequestFilters(EtcdAuthentication.class)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/{jclouds.api-version}/auth/users")
 public interface UsersApi {
@@ -52,13 +56,13 @@ public interface UsersApi {
    @Named("auth-user:list")
    @SelectJson("users")
    @GET
-   List<String> list();
+   List<UserDetails> list();
 
    @Named("auth-user:get")
    @Path("/{user}")
    @Fallback(NullOnNotFoundOr404.class)
    @GET
-   User get(@PathParam("user") String user);
+   UserDetails get(@PathParam("user") String user);
 
    @Named("auth-user:delete")
    @Path("/{user}")

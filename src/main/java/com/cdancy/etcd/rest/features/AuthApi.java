@@ -26,29 +26,38 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
 
 import com.cdancy.etcd.rest.domain.auth.AuthState;
 import com.cdancy.etcd.rest.fallbacks.EtcdFallbacks.AuthStateOnNoRootUserOrAlreadyEnabled;
+import com.cdancy.etcd.rest.filters.EtcdAuthentication;
+import com.cdancy.etcd.rest.parsers.DisabledAuthState;
+import com.cdancy.etcd.rest.parsers.EnabledAuthState;
 
+@RequestFilters(EtcdAuthentication.class)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/{jclouds.api-version}/auth")
 public interface AuthApi {
 
    @Named("auth:is-enabled")
-   @Consumes(MediaType.APPLICATION_JSON)
    @Path("/enable")
+   @SelectJson("enabled")
    @GET
-   AuthState isEnabled();
+   boolean isEnabled();
 
    @Named("auth:enable")
    @Path("/enable")
    @Fallback(AuthStateOnNoRootUserOrAlreadyEnabled.class)
+   @ResponseParser(EnabledAuthState.class)
    @PUT
    AuthState enable();
 
    @Named("auth:disable")
    @Path("/enable")
    @Fallback(AuthStateOnNoRootUserOrAlreadyEnabled.class)
+   @ResponseParser(DisabledAuthState.class)
    @DELETE
    AuthState disable();
 }

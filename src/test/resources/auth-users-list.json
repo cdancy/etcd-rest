@@ -1,7 +1,40 @@
 {  
    "users":[  
-      "hello",
-      "world",
-      "rkt"
+      {  
+         "user":"alice",
+         "roles":[  
+            {  
+               "role":"root",
+               "permissions":{  
+                  "kv":{  
+                     "read":[  
+                        "*"
+                     ],
+                     "write":[  
+                        "*"
+                     ]
+                  }
+               }
+            }
+         ]
+      },
+      {  
+         "user":"bob",
+         "roles":[  
+            {  
+               "role":"guest",
+               "permissions":{  
+                  "kv":{  
+                     "read":[  
+                        "*"
+                     ],
+                     "write":[  
+                        "*"
+                     ]
+                  }
+               }
+            }
+         ]
+      }
    ]
 }

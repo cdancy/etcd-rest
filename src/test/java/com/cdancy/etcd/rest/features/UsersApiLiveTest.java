@@ -28,7 +28,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.cdancy.etcd.rest.BaseEtcdApiLiveTest;
+import com.cdancy.etcd.rest.domain.auth.KeyValue;
+import com.cdancy.etcd.rest.domain.auth.Permission;
+import com.cdancy.etcd.rest.domain.auth.Role;
 import com.cdancy.etcd.rest.domain.auth.User;
+import com.cdancy.etcd.rest.domain.auth.UserDetails;
 import com.cdancy.etcd.rest.options.CreateUserOptions;
 import com.google.common.collect.Lists;
 
@@ -36,16 +40,24 @@ import com.google.common.collect.Lists;
 public class UsersApiLiveTest extends BaseEtcdApiLiveTest {
 
    private String userName;
+   private String roleName;
 
    @BeforeClass
    public void init() {
       userName = randomString();
+      roleName = randomString();
    }
 
    @Test
    public void testCreateUser() {
-      CreateUserOptions options = CreateUserOptions.create(userName, "world", Lists.newArrayList("fish", "bear"), null,
-            null);
+
+      Permission permission = Permission.create(KeyValue.create(Lists.newArrayList("*"), Lists.newArrayList("*")));
+      Role createRole = Role.create(roleName, permission, null, null, null);
+      Role role = api.rolesApi().create(roleName, createRole);
+      assertNotNull(role);
+      assertNull(role.errorMessage());
+
+      CreateUserOptions options = CreateUserOptions.create(userName, "world", Lists.newArrayList(roleName), null, null);
       User user = api().create(userName, options);
       assertNotNull(user);
       assertTrue(user.user().equals(userName));
@@ -54,18 +66,8 @@ public class UsersApiLiveTest extends BaseEtcdApiLiveTest {
    }
 
    @Test(dependsOnMethods = "testCreateUser")
-   public void testCreateUserWithExistingRoles() {
-      CreateUserOptions options = CreateUserOptions.create(userName, "world", Lists.newArrayList("hello", "world"),
-            null, null);
-      User user = api().create(userName, options);
-      assertNotNull(user);
-      assertTrue(user.user().equals(userName));
-      assertNotNull(user.errorMessage());
-   }
-
-   @Test(dependsOnMethods = "testCreateUserWithExistingRoles")
    public void testUserDetails() {
-      User user = api().get(userName);
+      UserDetails user = api().get(userName);
       assertNotNull(user);
       assertTrue(user.user().equals(userName));
       assertNotNull(user.roles().size() == 0);
@@ -74,10 +76,17 @@ public class UsersApiLiveTest extends BaseEtcdApiLiveTest {
 
    @Test(dependsOnMethods = "testUserDetails")
    public void testListUsers() {
-      List<String> users = api().list();
+      List<UserDetails> users = api().list();
       assertNotNull(users);
       assertTrue(users.size() > 0);
-      assertTrue(users.contains(userName));
+      boolean found = false;
+      for (UserDetails user : users) {
+         if (user.user().equals(userName)) {
+            found = true;
+            break;
+         }
+      }
+      assertTrue(found);
    }
 
    @Test(dependsOnMethods = "testListUsers")
@@ -88,7 +97,7 @@ public class UsersApiLiveTest extends BaseEtcdApiLiveTest {
 
    @Test
    public void testUserDetailsNotFound() {
-      User user = api().get(randomString());
+      UserDetails user = api().get(randomString());
       assertNull(user);
    }
 
@@ -100,6 +109,7 @@ public class UsersApiLiveTest extends BaseEtcdApiLiveTest {
 
    @AfterClass
    public void finalize() {
+      api.rolesApi().delete(roleName);
       api().delete(userName);
    }
 

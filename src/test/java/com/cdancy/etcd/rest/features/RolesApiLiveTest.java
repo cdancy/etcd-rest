@@ -78,10 +78,17 @@ public class RolesApiLiveTest extends BaseEtcdApiLiveTest {
 
    @Test(dependsOnMethods = "testRoleDetails")
    public void testListRoles() {
-      List<String> roles = api().list();
+      List<Role> roles = api().list();
       assertNotNull(roles);
       assertTrue(roles.size() > 0);
-      assertTrue(roles.contains(roleName));
+      boolean found = false;
+      for (Role role : roles) {
+         if (role.role().equals(roleName)) {
+            found = true;
+            break;
+         }
+      }
+      assertTrue(found);
    }
 
    @Test(dependsOnMethods = "testListRoles")

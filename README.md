@@ -22,6 +22,10 @@ Can be found in either jcenter or maven central.
 	  <artifactId>etcd-rest</artifactId>
 	  <version>0.0.1</version>
 	</dependency>
+	
+## Documentation
+
+javadocs can be found via [github pages here](http://cdancy.github.io/etcd-rest/docs/javadoc/)
 
 ## Property based setup
 

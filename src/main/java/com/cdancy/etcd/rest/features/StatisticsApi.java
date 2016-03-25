@@ -23,10 +23,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.rest.annotations.RequestFilters;
+
 import com.cdancy.etcd.rest.domain.statistics.Leader;
 import com.cdancy.etcd.rest.domain.statistics.Self;
 import com.cdancy.etcd.rest.domain.statistics.Store;
+import com.cdancy.etcd.rest.filters.EtcdAuthentication;
 
+@RequestFilters(EtcdAuthentication.class)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/{jclouds.api-version}/stats")
 public interface StatisticsApi {

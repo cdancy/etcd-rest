@@ -91,7 +91,7 @@ public class RolesApiMockTest extends BaseEtcdMockTest {
       EtcdApi etcdApi = api(server.getUrl("/"));
       RolesApi api = etcdApi.rolesApi();
       try {
-         List<String> roles = api.list();
+         List<Role> roles = api.list();
          assertNotNull(roles);
          assertTrue(roles.size() == 3);
          assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles");

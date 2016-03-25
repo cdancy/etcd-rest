@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 import com.cdancy.etcd.rest.EtcdApi;
 import com.cdancy.etcd.rest.EtcdApiMetadata;
 import com.cdancy.etcd.rest.domain.auth.User;
+import com.cdancy.etcd.rest.domain.auth.UserDetails;
 import com.cdancy.etcd.rest.internal.BaseEtcdMockTest;
 import com.cdancy.etcd.rest.options.CreateUserOptions;
 import com.google.common.collect.Lists;
@@ -88,9 +89,9 @@ public class UsersApiMockTest extends BaseEtcdMockTest {
       EtcdApi etcdApi = api(server.getUrl("/"));
       UsersApi api = etcdApi.usersApi();
       try {
-         List<String> users = api.list();
+         List<UserDetails> users = api.list();
          assertNotNull(users);
-         assertTrue(users.size() == 3);
+         assertTrue(users.size() == 2);
          assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/users");
       } finally {
          etcdApi.close();
@@ -101,11 +102,11 @@ public class UsersApiMockTest extends BaseEtcdMockTest {
    public void testGetUserDetails() throws Exception {
       MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-users-create.json")).setResponseCode(200));
+      server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-users-details.json")).setResponseCode(200));
       EtcdApi etcdApi = api(server.getUrl("/"));
       UsersApi api = etcdApi.usersApi();
       try {
-         User user = api.get("alice");
+         UserDetails user = api.get("alice");
          assertNotNull(user);
          assertTrue(user.user().equals("alice"));
          assertTrue(user.roles().size() == 2);
@@ -123,7 +124,7 @@ public class UsersApiMockTest extends BaseEtcdMockTest {
       EtcdApi etcdApi = api(server.getUrl("/"));
       UsersApi api = etcdApi.usersApi();
       try {
-         User user = api.get("random");
+         UserDetails user = api.get("random");
          assertNull(user);
          assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/random");
       } finally {
