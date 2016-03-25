@@ -1,3 +1,3 @@
-### Version 0.0.1 (TBA)
+### Version 1.0.0 (TBA)
 
 * TODO
