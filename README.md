@@ -14,7 +14,7 @@ Client's can be built like so:
       .credentials("admin:password") // Optional.
       .build();
 
-      Version version = client.api().miscellaneousApi().version();
+      Key createdKey = client.api().keysApi().createKey("keyName", "keyValue");
       
 ## Latest release
 
@@ -56,6 +56,24 @@ etcd-rest credentials can take 1 of 2 forms:
 - Colon delimited username and password: __admin:password__ 
 - Base64 encoded username and password: __YWRtaW46cGFzc3dvcmQ=__ 
 
+## Understanding ErrorMessage
+
+Instead of throwing an exception most objects will have an attached [ErrorMessage](https://github.com/cdancy/etcd-rest/blob/master/src/main/java/com/cdancy/etcd/rest/error/ErrorMessage.java). It is up to the user to check the handed back object to see if the `ErrorMessage` is non-null before proceeding. 
+
+The `message` attribute of `ErrorMessage` is what etcd hands back to us when something fails. In some cases the message may be expected (e.g. Key already exists) and in others not (e.g. User HelloWorld already exists). Using the example above one might proceed like this:
+
+      Key createdKey = client.api().keysApi().createKey("keyName", "keyValue");
+      if (createdKey.errorMessage() != null) {
+      
+          // at this point we know something popped on the server-side.
+          // now decide whether we care or not.
+          if (createdKey.errorMessage().message().contains("Key already exists")) {
+              // ignore 
+          } else {
+              throw new Exception("Unexpected error: " + createdKey.errorMessage().message());
+          }
+      }
+
 ## Examples
 
 The [mock](https://github.com/cdancy/etcd-rest/tree/master/src/test/java/com/cdancy/etcd/rest/features) and [live](https://github.com/cdancy/etcd-rest/tree/master/src/test/java/com/cdancy/etcd/rest/features) tests provide many examples
@@ -64,6 +82,7 @@ that you can use in your own code.
 ## Components
 
 - jclouds \- used as the backend for communicating with Etcd's REST API
+- AutoValue \- used to create immutable value types both to and from the etcd program
     
 ## Testing
 
