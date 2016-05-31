@@ -23,7 +23,7 @@ Can be found in jcenter:
 	<dependency>
 	  <groupId>com.cdancy</groupId>
 	  <artifactId>etcd-rest</artifactId>
-	  <version>0.9.0</version>
+	  <version>0.9.1</version>
 	</dependency>
 	
 ## Documentation
