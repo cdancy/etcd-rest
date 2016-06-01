@@ -18,13 +18,15 @@ Client's can be built like so:
       
 ## Latest release
 
-Can be found in jcenter:
+Can be sourced from jcenter like so:
 
 	<dependency>
 	  <groupId>com.cdancy</groupId>
 	  <artifactId>etcd-rest</artifactId>
-	  <version>0.9.1</version>
+	  <version>0.9.2</version>
 	</dependency>
+	
+We also publish '__-sources__', '__-javadoc__', and '__-all__' artifacts.
 	
 ## Documentation
 

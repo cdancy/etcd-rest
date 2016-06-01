@@ -1,3 +1,7 @@
+shadowJar {
+  mergeServiceFiles()
+}
+
 task sourcesJar(type: Jar) {
     classifier 'sources'
     from sourceSets.main.allSource
@@ -11,4 +15,5 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives sourcesJar
     archives javadocJar
+    archives shadowJar
 }
