@@ -1,3 +1,7 @@
+### Version 0.9.3 (TBA)
+
+* Travis CI integration
+
 ### Version 0.9.2 (6/1/16)
 
 * Will now publish fat/shadow jar
