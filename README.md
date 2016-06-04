@@ -1,4 +1,4 @@
-
+[![Build Status](https://travis-ci.org/cdancy/etcd-rest.svg?branch=master)](https://travis-ci.org/cdancy/etcd-rest)
 # etcd-rest
 
 java-based client to interact with Etcd's REST API. 
