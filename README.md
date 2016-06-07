@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/cdancy/etcd-rest.svg?branch=master)](https://travis-ci.org/cdancy/etcd-rest)
 # etcd-rest
+![alt tag](https://github.com/cdancy/etcd/blob/master/logos/etcd-horizontal-color.png)
 
 java-based client to interact with Etcd's REST API. 
 
