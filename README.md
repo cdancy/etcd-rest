@@ -25,9 +25,8 @@ Can be sourced from jcenter like so:
 	  <groupId>com.cdancy</groupId>
 	  <artifactId>etcd-rest</artifactId>
 	  <version>0.9.2</version>
+	  <classifier>sources|javadoc|all</classifier> (Optional)
 	</dependency>
-	
-We also publish '__-sources__', '__-javadoc__', and '__-all__' artifacts.
 	
 ## Documentation
 
