@@ -17,6 +17,10 @@
 
 package com.cdancy.etcd.rest;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.jclouds.ContextBuilder;
 
 public class EtcdClient {
@@ -39,11 +43,15 @@ public class EtcdClient {
 
       // query system for endPoint value
       if (endPoint == null) {
-         if ((endPoint = retrivePropertyValue("EtcdApi.rest.endpoint")) == null) {
+         if ((endPoint = retrivePropertyValue("etcd.rest.endpoint")) == null) {
             if ((endPoint = retrivePropertyValue("etcdRestEndpoint")) == null) {
                if ((endPoint = retrivePropertyValue("ETCD_REST_ENDPOINT")) == null) {
-                  endPoint = "http://127.0.0.1:2379";
-                  System.out.println("Etcd REST endpoint was not found. Defaulting to: " + endPoint);
+                  if ((endPoint = checkClient("ETCD_LISTEN_CLIENT_URLS")) == null) {
+                     if ((endPoint = checkClient("ETCD_ADVERTISE_CLIENT_URLS")) == null) {
+                        endPoint = "http://127.0.0.1:2379";
+                        System.out.println("Etcd REST endpoint was not found. Defaulting to: " + endPoint);
+                     }
+                  }
                }
             }
          }
@@ -62,9 +70,21 @@ public class EtcdClient {
       }
    }
 
-   private String retrivePropertyValue(String key) {
+   public String retrivePropertyValue(String key) {
       String value = System.getProperty(key);
       return value != null ? value : System.getenv(key);
+   }
+
+   public String checkClient(String key) {
+      String clientList = retrivePropertyValue(key);
+      if (clientList != null) {
+         for (String possibleClient : clientList.split(",")) {
+            if (EtcdClient.pingEtcdURL(possibleClient, 60000)) {
+               return possibleClient;
+            }
+         }
+      }
+      return null;
    }
 
    public String endPoint() {
@@ -103,6 +123,25 @@ public class EtcdClient {
 
       public EtcdClient build() {
          return new EtcdClient(endPoint, credentials);
+      }
+   }
+
+   public static boolean pingEtcdURL(String url, int timeout) {
+      url = url.replaceFirst("^https", "http");
+      HttpURLConnection connection = null;
+      try {
+         connection = (HttpURLConnection) new URL(url + "/version").openConnection();
+         connection.setConnectTimeout(timeout);
+         connection.setReadTimeout(timeout);
+         connection.setRequestMethod("GET");
+         int responseCode = connection.getResponseCode();
+         return (200 <= responseCode && responseCode <= 399);
+      } catch (IOException exception) {
+         return false;
+      } finally {
+         if (connection != null) {
+            connection.disconnect();
+         }
       }
    }
 }
