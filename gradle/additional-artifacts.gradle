@@ -11,9 +11,3 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier 'javadoc'
     from javadoc.destinationDir
 }
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-    archives shadowJar
-}

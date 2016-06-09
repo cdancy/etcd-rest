@@ -1,16 +1,11 @@
-repositories {
-    jcenter()
-    mavenCentral()
-}
-
 buildscript {
     repositories {
         jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1"
-        classpath "com.bmuschko:gradle-docker-plugin:2.6.8"
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1'
+        classpath "com.bmuschko:gradle-docker-plugin:3.0.0"
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
 }
@@ -27,6 +22,11 @@ apply from: "$rootDir/gradle/dependencies.gradle"
 apply from: "$rootDir/gradle/documentation.gradle"
 apply from: "$rootDir/gradle/publishing.gradle"
 apply from: "$rootDir/gradle/release.gradle"
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
 
 dependencies {
     compile ('org.apache.jclouds:jclouds-core:1.9.2') 
@@ -62,57 +62,32 @@ tasks.withType(JavaCompile) {
     options.compilerArgs += ["-Xlint:-options"]
 }
 
+tasks.withType(Test) {
+    testLogging {
+        showStandardStreams = true
+        events 'started', 'passed', 'failed'
+    }
+
+}
+
 task mockTest(type: Test) {
-    useTestNG() 
-	include "**/*MockTest.class"
-	testLogging {
-		showStandardStreams = true
-		events 'started', 'passed', 'failed'
-	}
+    useTestNG()
+    include "**/*MockTest.class"
 }
 
 task integTest(type: Test, dependsOn: ['mockTest']) {
-    useTestNG() 
+    useTestNG()
     include "**/**LiveTest.class"
-    testLogging {
-		showStandardStreams = true
-        events 'started', 'passed', 'failed'
-    } 
     doFirst {
-    	String runtimeURL = bootstrapDocker ? "http://${getLocalHost()}:2379" : "${testEtcdEndpoint}"
-    	systemProperties = ["test.etcd.endpoint" : runtimeURL]
+        String runtimeURL = bootstrapDocker ? "http://${getLocalHost()}:2379" : "${testEtcdEndpoint}"
+        systemProperties = ["test.etcd.endpoint" : runtimeURL]
     }
 }
 
 if (bootstrapDocker) {
-	def integTestTask = project.tasks.getByName('integTest')
-	integTestTask.dependsOn('startNode')
-	integTestTask.finalizedBy('teardownNode')
-}
-
-artifactory {
-	contextUrl = artifactoryURL
-	publish {
-		repository {
-			repoKey = version.endsWith('-SNAPSHOT') ? snapshotRepository : releaseRepository
-			username = artifactoryUser
-			password = artifactoryPassword
-			maven = true
-		}
-		defaults {
-			publications ('artifactoryJava')
-		}
-	}
-}
-
-publishing {
-	publications {
-		artifactoryJava(MavenPublication) {
-			from components.java
-			artifact sourcesJar
-			artifact javadocJar
-		}
-	}
+    def integTestTask = project.tasks.getByName('integTest')
+    integTestTask.dependsOn('startNode')
+    integTestTask.finalizedBy('teardownNode')
 }
 
 docker {
@@ -131,7 +106,7 @@ task pullEtcdImage(type: com.bmuschko.gradle.docker.tasks.image.DockerPullImage)
 }
 
 task stopNode(type: com.bmuschko.gradle.docker.tasks.container.DockerStopContainer) {
-	onlyIf { checkNode() }
+    onlyIf { checkNode() }
     dependsOn pullEtcdImage
     targetContainerId { etcdContainerName }
     timeout = 30
@@ -165,8 +140,8 @@ task startNode(type: com.bmuschko.gradle.docker.tasks.container.DockerStartConta
     dependsOn createNode
     targetContainerId { createNode.getContainerId() }
     doLast {
-    	logger.quiet "Sleeping for 5 seconds to allow cluster to init..."
-    	sleep(5000)
+        logger.quiet "Sleeping for 5 seconds to allow cluster to init..."
+        sleep(5000)
     }
 }
 
