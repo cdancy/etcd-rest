@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertFalse;
@@ -36,85 +37,85 @@ import com.google.common.collect.Lists;
 @Test(groups = "live", testName = "RolesApiLiveTest", singleThreaded = true)
 public class RolesApiLiveTest extends BaseEtcdApiLiveTest {
 
-   private String roleName;
+    private String roleName;
 
-   @BeforeClass
-   public void init() {
-      roleName = randomString();
-   }
+    @BeforeClass
+    public void init() {
+        roleName = randomString();
+    }
 
-   @Test
-   public void testCreateRole() {
-      Permission permission = Permission.create(KeyValue.create(Lists.newArrayList("*"), Lists.newArrayList("*")));
-      Role createRole = Role.create(roleName, permission, null, null, null);
-      Role role = api().create(roleName, createRole);
-      assertNotNull(role);
-      assertTrue(role.role().equals(roleName));
-      assertNotNull(role.permissions());
-      assertNotNull(role.permissions().kv().read().contains("*"));
-      assertNotNull(role.permissions().kv().write().contains("*"));
-   }
+    @Test
+    public void testCreateRole() {
+        Permission permission = Permission.create(KeyValue.create(Lists.newArrayList("*"), Lists.newArrayList("*")));
+        Role createRole = Role.create(roleName, permission, null, null, null);
+        Role role = api().create(roleName, createRole);
+        assertNotNull(role);
+        assertTrue(role.role().equals(roleName));
+        assertNotNull(role.permissions());
+        assertNotNull(role.permissions().kv().read().contains("*"));
+        assertNotNull(role.permissions().kv().write().contains("*"));
+    }
 
-   @Test(dependsOnMethods = "testCreateRole")
-   public void testCreateRoleWithExistingUser() {
-      Permission permission = Permission.create(KeyValue.create(Lists.newArrayList("*"), Lists.newArrayList("*")));
-      Role createRole = Role.create(roleName, permission, null, null, null);
-      Role role = api().create(roleName, createRole);
-      assertNotNull(role);
-      assertTrue(role.role().equals(roleName));
-      assertNotNull(role.errorMessage());
-      assertTrue(role.errorMessage().message().contains("already exists"));
-   }
+    @Test(dependsOnMethods = "testCreateRole")
+    public void testCreateRoleWithExistingUser() {
+        Permission permission = Permission.create(KeyValue.create(Lists.newArrayList("*"), Lists.newArrayList("*")));
+        Role createRole = Role.create(roleName, permission, null, null, null);
+        Role role = api().create(roleName, createRole);
+        assertNotNull(role);
+        assertTrue(role.role().equals(roleName));
+        assertNotNull(role.errorMessage());
+        assertTrue(role.errorMessage().message().contains("already exists"));
+    }
 
-   @Test(dependsOnMethods = "testCreateRoleWithExistingUser")
-   public void testRoleDetails() {
-      Role role = api().get(roleName);
-      assertNotNull(role);
-      assertTrue(role.role().equals(roleName));
-      assertNotNull(role.permissions());
-      assertNotNull(role.permissions().kv().read().contains("*"));
-      assertNotNull(role.permissions().kv().write().contains("*"));
-   }
+    @Test(dependsOnMethods = "testCreateRoleWithExistingUser")
+    public void testRoleDetails() {
+        Role role = api().get(roleName);
+        assertNotNull(role);
+        assertTrue(role.role().equals(roleName));
+        assertNotNull(role.permissions());
+        assertNotNull(role.permissions().kv().read().contains("*"));
+        assertNotNull(role.permissions().kv().write().contains("*"));
+    }
 
-   @Test(dependsOnMethods = "testRoleDetails")
-   public void testListRoles() {
-      List<Role> roles = api().list();
-      assertNotNull(roles);
-      assertTrue(roles.size() > 0);
-      boolean found = false;
-      for (Role role : roles) {
-         if (role.role().equals(roleName)) {
-            found = true;
-            break;
-         }
-      }
-      assertTrue(found);
-   }
+    @Test(dependsOnMethods = "testRoleDetails")
+    public void testListRoles() {
+        List<Role> roles = api().list();
+        assertNotNull(roles);
+        assertTrue(roles.size() > 0);
+        boolean found = false;
+        for (Role role : roles) {
+            if (role.role().equals(roleName)) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue(found);
+    }
 
-   @Test(dependsOnMethods = "testListRoles")
-   public void testDeleteRole() {
-      boolean success = api().delete(roleName);
-      assertTrue(success);
-   }
+    @Test(dependsOnMethods = "testListRoles")
+    public void testDeleteRole() {
+        boolean success = api().delete(roleName);
+        assertTrue(success);
+    }
 
-   @Test
-   public void testRoleDetailsNotFound() {
-      Role role = api().get(randomString());
-      assertNull(role);
-   }
+    @Test
+    public void testRoleDetailsNotFound() {
+        Role role = api().get(randomString());
+        assertNull(role);
+    }
 
-   @Test
-   public void testDeleteRoleNotFound() {
-      boolean success = api().delete(randomString());
-      assertFalse(success);
-   }
+    @Test
+    public void testDeleteRoleNotFound() {
+        boolean success = api().delete(randomString());
+        assertFalse(success);
+    }
 
-   @AfterClass
-   public void finalize() {
-      api().delete(roleName);
-   }
+    @AfterClass
+    public void cleanup() {
+        api().delete(roleName);
+    }
 
-   private RolesApi api() {
-      return api.rolesApi();
-   }
+    private RolesApi api() {
+        return api.rolesApi();
+    }
 }

@@ -34,23 +34,23 @@ import com.cdancy.etcd.rest.filters.EtcdAuthentication;
 @RequestFilters(EtcdAuthentication.class)
 public interface MiscellaneousApi {
 
-   @Named("miscellaneous:version")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/version")
-   @GET
-   Version version();
+    @Named("miscellaneous:version")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/version")
+    @GET
+    Version version();
 
-   @Named("miscellaneous:health")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/health")
-   @SelectJson("health")
-   @Fallback(FalseOn503.class)
-   @GET
-   boolean health();
+    @Named("miscellaneous:health")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/health")
+    @SelectJson("health")
+    @Fallback(FalseOn503.class)
+    @GET
+    boolean health();
 
-   @Named("miscellaneous:metrics")
-   @Consumes(MediaType.TEXT_PLAIN)
-   @Path("/metrics")
-   @GET
-   String metrics();
+    @Named("miscellaneous:metrics")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Path("/metrics")
+    @GET
+    String metrics();
 }

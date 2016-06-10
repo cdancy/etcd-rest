@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertFalse;
@@ -24,7 +25,6 @@ import org.testng.annotations.Test;
 
 import com.cdancy.etcd.rest.EtcdApi;
 import com.cdancy.etcd.rest.domain.miscellaneous.Version;
-import com.cdancy.etcd.rest.features.MiscellaneousApi;
 import com.cdancy.etcd.rest.internal.BaseEtcdMockTest;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -36,72 +36,72 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 @Test(groups = "unit", testName = "MiscellaneousApiMockTest")
 public class MiscellaneousApiMockTest extends BaseEtcdMockTest {
 
-   private final String versionRegex = "^\\d+\\.\\d+\\.\\d+$";
+    private final String versionRegex = "^\\d+\\.\\d+\\.\\d+$";
 
-   public void testGetVersion() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetVersion() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/version.json")).setResponseCode(200));
-      EtcdApi etcdJavaApi = api(server.getUrl("/"));
-      MiscellaneousApi api = etcdJavaApi.miscellaneousApi();
-      try {
-         Version version = api.version();
-         assertNotNull(version);
-         assertTrue(version.etcdServer().matches(versionRegex));
-         assertTrue(version.etcdCluster().matches(versionRegex));
-         assertSent(server, "GET", "/version");
-      } finally {
-         etcdJavaApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/version.json")).setResponseCode(200));
+        EtcdApi etcdJavaApi = api(server.getUrl("/"));
+        MiscellaneousApi api = etcdJavaApi.miscellaneousApi();
+        try {
+            Version version = api.version();
+            assertNotNull(version);
+            assertTrue(version.etcdServer().matches(versionRegex));
+            assertTrue(version.etcdCluster().matches(versionRegex));
+            assertSent(server, "GET", "/version");
+        } finally {
+            etcdJavaApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testGetHealth() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetHealth() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/health.json")).setResponseCode(200));
-      EtcdApi etcdJavaApi = api(server.getUrl("/"));
-      MiscellaneousApi api = etcdJavaApi.miscellaneousApi();
-      try {
-         boolean health = api.health();
-         assertTrue(health);
-         assertSent(server, "GET", "/health");
-      } finally {
-         etcdJavaApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/health.json")).setResponseCode(200));
+        EtcdApi etcdJavaApi = api(server.getUrl("/"));
+        MiscellaneousApi api = etcdJavaApi.miscellaneousApi();
+        try {
+            boolean health = api.health();
+            assertTrue(health);
+            assertSent(server, "GET", "/health");
+        } finally {
+            etcdJavaApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testGetBadHealth() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetBadHealth() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/health-bad.json")).setResponseCode(503));
-      EtcdApi etcdJavaApi = api(server.getUrl("/"));
-      MiscellaneousApi api = etcdJavaApi.miscellaneousApi();
-      try {
-         boolean health = api.health();
-         assertFalse(health);
-         assertSent(server, "GET", "/health");
-      } finally {
-         etcdJavaApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/health-bad.json")).setResponseCode(503));
+        EtcdApi etcdJavaApi = api(server.getUrl("/"));
+        MiscellaneousApi api = etcdJavaApi.miscellaneousApi();
+        try {
+            boolean health = api.health();
+            assertFalse(health);
+            assertSent(server, "GET", "/health");
+        } finally {
+            etcdJavaApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testGetMetrics() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetMetrics() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/metrics.txt")).setResponseCode(200));
-      EtcdApi etcdJavaApi = api(server.getUrl("/"));
-      MiscellaneousApi api = etcdJavaApi.miscellaneousApi();
-      try {
-         String metrics = api.metrics();
-         assertNotNull(metrics);
-         assertSentAcceptText(server, "GET", "/metrics");
-      } finally {
-         etcdJavaApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/metrics.txt")).setResponseCode(200));
+        EtcdApi etcdJavaApi = api(server.getUrl("/"));
+        MiscellaneousApi api = etcdJavaApi.miscellaneousApi();
+        try {
+            String metrics = api.metrics();
+            assertNotNull(metrics);
+            assertSentAcceptText(server, "GET", "/metrics");
+        } finally {
+            etcdJavaApi.close();
+            server.shutdown();
+        }
+    }
 
 }

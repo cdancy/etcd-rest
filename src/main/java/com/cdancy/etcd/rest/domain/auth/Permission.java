@@ -24,13 +24,13 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Permission {
 
-   public abstract KeyValue kv();
+    public abstract KeyValue kv();
 
-   Permission() {
-   }
+    Permission() {
+    }
 
-   @SerializedNames({ "kv" })
-   public static Permission create(KeyValue kv) {
-      return new AutoValue_Permission(kv);
-   }
+    @SerializedNames({ "kv" })
+    public static Permission create(KeyValue kv) {
+        return new AutoValue_Permission(kv);
+    }
 }

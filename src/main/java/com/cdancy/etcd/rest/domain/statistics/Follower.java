@@ -24,15 +24,15 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Follower {
 
-   public abstract Counts counts();
+    public abstract Counts counts();
 
-   public abstract Latency latency();
+    public abstract Latency latency();
 
-   Follower() {
-   }
+    Follower() {
+    }
 
-   @SerializedNames({ "counts", "latency" })
-   private static Follower create(Counts counts, Latency latency) {
-      return new AutoValue_Follower(counts, latency);
-   }
+    @SerializedNames({ "counts", "latency" })
+    private static Follower create(Counts counts, Latency latency) {
+        return new AutoValue_Follower(counts, latency);
+    }
 }

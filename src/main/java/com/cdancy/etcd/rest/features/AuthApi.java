@@ -41,23 +41,23 @@ import com.cdancy.etcd.rest.parsers.EnabledAuthState;
 @Path("/{jclouds.api-version}/auth")
 public interface AuthApi {
 
-   @Named("auth:is-enabled")
-   @Path("/enable")
-   @SelectJson("enabled")
-   @GET
-   boolean isEnabled();
+    @Named("auth:is-enabled")
+    @Path("/enable")
+    @SelectJson("enabled")
+    @GET
+    boolean isEnabled();
 
-   @Named("auth:enable")
-   @Path("/enable")
-   @Fallback(AuthStateOnNoRootUserOrAlreadyEnabled.class)
-   @ResponseParser(EnabledAuthState.class)
-   @PUT
-   AuthState enable();
+    @Named("auth:enable")
+    @Path("/enable")
+    @Fallback(AuthStateOnNoRootUserOrAlreadyEnabled.class)
+    @ResponseParser(EnabledAuthState.class)
+    @PUT
+    AuthState enable();
 
-   @Named("auth:disable")
-   @Path("/enable")
-   @Fallback(AuthStateOnNoRootUserOrAlreadyEnabled.class)
-   @ResponseParser(DisabledAuthState.class)
-   @DELETE
-   AuthState disable();
+    @Named("auth:disable")
+    @Path("/enable")
+    @Fallback(AuthStateOnNoRootUserOrAlreadyEnabled.class)
+    @ResponseParser(DisabledAuthState.class)
+    @DELETE
+    AuthState disable();
 }

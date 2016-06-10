@@ -24,15 +24,15 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Version {
 
-   public abstract String etcdServer();
+    public abstract String etcdServer();
 
-   public abstract String etcdCluster();
+    public abstract String etcdCluster();
 
-   Version() {
-   }
+    Version() {
+    }
 
-   @SerializedNames({ "etcdserver", "etcdcluster" })
-   public static Version create(String etcdserver, String etcdcluster) {
-      return new AutoValue_Version(etcdserver, etcdcluster);
-   }
+    @SerializedNames({ "etcdserver", "etcdcluster" })
+    public static Version create(String etcdserver, String etcdcluster) {
+        return new AutoValue_Version(etcdserver, etcdcluster);
+    }
 }

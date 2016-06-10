@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertFalse;
@@ -41,127 +42,128 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 @Test(groups = "unit", testName = "UsersApiMockTest")
 public class UsersApiMockTest extends BaseEtcdMockTest {
 
-   public void testCreateUser() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testCreateUser() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-users-create.json")).setResponseCode(201));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      UsersApi api = etcdApi.usersApi();
-      try {
-         CreateUserOptions options = CreateUserOptions.create("alice", "world", Lists.newArrayList("role1", "role2"),
-               null, null);
-         User user = api.create("alice", options);
-         assertNotNull(user);
-         assertTrue(user.user().equals("alice"));
-         assertNotNull(user.roles().size() == 2);
-         assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/alice");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-users-create.json")).setResponseCode(201));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        UsersApi api = etcdApi.usersApi();
+        try {
+            CreateUserOptions options = CreateUserOptions.create("alice", "world", Lists.newArrayList("role1", "role2"),
+                    null, null);
+            User user = api.create("alice", options);
+            assertNotNull(user);
+            assertTrue(user.user().equals("alice"));
+            assertNotNull(user.roles().size() == 2);
+            assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/alice");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testCreateUserAlreadyExists() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testCreateUserAlreadyExists() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(
-            new MockResponse().setBody(payloadFromResource("/auth-users-create-exists.json")).setResponseCode(409));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      UsersApi api = etcdApi.usersApi();
-      try {
-         CreateUserOptions options = CreateUserOptions.create("rkt", "world", Lists.newArrayList("role1", "role2"),
-               null, null);
-         User user = api.create("rkt", options);
-         assertNotNull(user);
-         assertTrue(user.user().equals("rkt"));
-         assertNotNull(user.errorMessage());
-         assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/rkt");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(
+                new MockResponse().setBody(payloadFromResource("/auth-users-create-exists.json")).setResponseCode(409));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        UsersApi api = etcdApi.usersApi();
+        try {
+            CreateUserOptions options = CreateUserOptions.create("rkt", "world", Lists.newArrayList("role1", "role2"),
+                    null, null);
+            User user = api.create("rkt", options);
+            assertNotNull(user);
+            assertTrue(user.user().equals("rkt"));
+            assertNotNull(user.errorMessage());
+            assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/rkt");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testListUsers() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testListUsers() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-users-list.json")).setResponseCode(200));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      UsersApi api = etcdApi.usersApi();
-      try {
-         List<UserDetails> users = api.list();
-         assertNotNull(users);
-         assertTrue(users.size() == 2);
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/users");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-users-list.json")).setResponseCode(200));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        UsersApi api = etcdApi.usersApi();
+        try {
+            List<UserDetails> users = api.list();
+            assertNotNull(users);
+            assertTrue(users.size() == 2);
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/users");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testGetUserDetails() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetUserDetails() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-users-details.json")).setResponseCode(200));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      UsersApi api = etcdApi.usersApi();
-      try {
-         UserDetails user = api.get("alice");
-         assertNotNull(user);
-         assertTrue(user.user().equals("alice"));
-         assertTrue(user.roles().size() == 2);
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/alice");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(
+                new MockResponse().setBody(payloadFromResource("/auth-users-details.json")).setResponseCode(200));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        UsersApi api = etcdApi.usersApi();
+        try {
+            UserDetails user = api.get("alice");
+            assertNotNull(user);
+            assertTrue(user.user().equals("alice"));
+            assertTrue(user.roles().size() == 2);
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/alice");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testGetUserDetailsNotFound() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetUserDetailsNotFound() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setResponseCode(404));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      UsersApi api = etcdApi.usersApi();
-      try {
-         UserDetails user = api.get("random");
-         assertNull(user);
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/random");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setResponseCode(404));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        UsersApi api = etcdApi.usersApi();
+        try {
+            UserDetails user = api.get("random");
+            assertNull(user);
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/random");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testDeleteUser() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testDeleteUser() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setResponseCode(200));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      UsersApi api = etcdApi.usersApi();
-      try {
-         boolean success = api.delete("random");
-         assertTrue(success);
-         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/random");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setResponseCode(200));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        UsersApi api = etcdApi.usersApi();
+        try {
+            boolean success = api.delete("random");
+            assertTrue(success);
+            assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/random");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testDeleteUserNotFound() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testDeleteUserNotFound() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setResponseCode(404));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      UsersApi api = etcdApi.usersApi();
-      try {
-         boolean success = api.delete("random");
-         assertFalse(success);
-         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/random");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setResponseCode(404));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        UsersApi api = etcdApi.usersApi();
+        try {
+            boolean success = api.delete("random");
+            assertFalse(success);
+            assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/auth/users/random");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 }

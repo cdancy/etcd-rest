@@ -29,27 +29,27 @@ import com.google.common.collect.ImmutableList;
 @AutoValue
 public abstract class Member {
 
-   @Nullable
-   public abstract String id();
+    @Nullable
+    public abstract String id();
 
-   @Nullable
-   public abstract String name();
+    @Nullable
+    public abstract String name();
 
-   public abstract List<String> peerURLs();
+    public abstract List<String> peerURLs();
 
-   public abstract List<String> clientURLs();
+    public abstract List<String> clientURLs();
 
-   @Nullable
-   public abstract ErrorMessage errorMessage();
+    @Nullable
+    public abstract ErrorMessage errorMessage();
 
-   Member() {
-   }
+    Member() {
+    }
 
-   @SerializedNames({ "id", "name", "peerURLs", "clientURLs", "message" })
-   public static Member create(String id, String name, List<String> peerURLs, List<String> clientURLs,
-         ErrorMessage errorMessage) {
-      return new AutoValue_Member(id, name,
-            peerURLs != null ? ImmutableList.copyOf(peerURLs) : ImmutableList.<String> of(),
-            clientURLs != null ? ImmutableList.copyOf(clientURLs) : ImmutableList.<String> of(), errorMessage);
-   }
+    @SerializedNames({ "id", "name", "peerURLs", "clientURLs", "message" })
+    public static Member create(String id, String name, List<String> peerURLs, List<String> clientURLs,
+            ErrorMessage errorMessage) {
+        return new AutoValue_Member(id, name,
+                peerURLs != null ? ImmutableList.copyOf(peerURLs) : ImmutableList.<String> of(),
+                clientURLs != null ? ImmutableList.copyOf(clientURLs) : ImmutableList.<String> of(), errorMessage);
+    }
 }

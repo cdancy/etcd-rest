@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertNotNull;
@@ -27,11 +28,11 @@ import com.cdancy.etcd.rest.domain.miscellaneous.Version;
 @Test(groups = "live", testName = "EtcdClientLiveTest")
 public class EtcdClientLiveTest extends BaseEtcdApiLiveTest {
 
-   @Test
-   public void testCreateClient() {
-      EtcdClient client = new EtcdClient.Builder().endPoint(this.endpoint).build();
+    @Test
+    public void testCreateClient() {
+        EtcdClient client = new EtcdClient.Builder().endPoint(this.endpoint).build();
 
-      Version version = client.api().miscellaneousApi().version();
-      assertNotNull(version);
-   }
+        Version version = client.api().miscellaneousApi().version();
+        assertNotNull(version);
+    }
 }

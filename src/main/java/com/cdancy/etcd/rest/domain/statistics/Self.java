@@ -24,32 +24,32 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Self {
 
-   public abstract String id();
+    public abstract String id();
 
-   public abstract LeaderInfo leaderInfo();
+    public abstract LeaderInfo leaderInfo();
 
-   public abstract String name();
+    public abstract String name();
 
-   public abstract double recvAppendRequestCnt();
+    public abstract double recvAppendRequestCnt();
 
-   public abstract double sendAppendRequestCnt();
+    public abstract double sendAppendRequestCnt();
 
-   public abstract double sendBandwidthRate();
+    public abstract double sendBandwidthRate();
 
-   public abstract double sendPkgRate();
+    public abstract double sendPkgRate();
 
-   public abstract String startTime();
+    public abstract String startTime();
 
-   public abstract String state();
+    public abstract String state();
 
-   Self() {
-   }
+    Self() {
+    }
 
-   @SerializedNames({ "id", "leaderInfo", "name", "recvAppendRequestCnt", "sendAppendRequestCnt", "sendBandwidthRate",
-         "sendPkgRate", "startTime", "state" })
-   private static Self create(String id, LeaderInfo leaderInfo, String name, double recvAppendRequestCnt,
-         double sendAppendRequestCnt, double sendBandwidthRate, double sendPkgRate, String startTime, String state) {
-      return new AutoValue_Self(id, leaderInfo, name, recvAppendRequestCnt, sendAppendRequestCnt, sendBandwidthRate,
-            sendPkgRate, startTime, state);
-   }
+    @SerializedNames({ "id", "leaderInfo", "name", "recvAppendRequestCnt", "sendAppendRequestCnt", "sendBandwidthRate",
+            "sendPkgRate", "startTime", "state" })
+    private static Self create(String id, LeaderInfo leaderInfo, String name, double recvAppendRequestCnt,
+            double sendAppendRequestCnt, double sendBandwidthRate, double sendPkgRate, String startTime, String state) {
+        return new AutoValue_Self(id, leaderInfo, name, recvAppendRequestCnt, sendAppendRequestCnt, sendBandwidthRate,
+                sendPkgRate, startTime, state);
+    }
 }

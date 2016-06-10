@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertFalse;
@@ -36,56 +37,56 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 @Test(groups = "unit", testName = "AuthApiMockTest")
 public class AuthApiMockTest extends BaseEtcdMockTest {
 
-   public void testIsEnabled() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testIsEnabled() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-enabled.json")).setResponseCode(200));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      AuthApi api = etcdApi.authApi();
-      try {
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-enabled.json")).setResponseCode(200));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        AuthApi api = etcdApi.authApi();
+        try {
 
-         boolean state = api.isEnabled();
-         assertTrue(state);
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/enable");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+            boolean state = api.isEnabled();
+            assertTrue(state);
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/enable");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testEnable() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testEnable() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setResponseCode(200));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      AuthApi api = etcdApi.authApi();
-      try {
-         AuthState state = api.enable();
-         assertNotNull(state);
-         assertTrue(state.enabled());
-         assertNull(state.errorMessage());
-         assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/auth/enable");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setResponseCode(200));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        AuthApi api = etcdApi.authApi();
+        try {
+            AuthState state = api.enable();
+            assertNotNull(state);
+            assertTrue(state.enabled());
+            assertNull(state.errorMessage());
+            assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/auth/enable");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testDisabled() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testDisabled() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setResponseCode(200));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      AuthApi api = etcdApi.authApi();
-      try {
-         AuthState state = api.disable();
-         assertNotNull(state);
-         assertFalse(state.enabled());
-         assertNull(state.errorMessage());
-         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/auth/enable");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setResponseCode(200));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        AuthApi api = etcdApi.authApi();
+        try {
+            AuthState state = api.disable();
+            assertNotNull(state);
+            assertFalse(state.enabled());
+            assertNull(state.errorMessage());
+            assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/auth/enable");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertFalse;
@@ -39,135 +40,135 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 @Test(groups = "unit", testName = "MembersApiMockTest")
 public class MembersApiMockTest extends BaseEtcdMockTest {
 
-   public void testListMembers() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testListMembers() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/members.json")).setResponseCode(200));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      MembersApi api = etcdApi.membersApi();
-      try {
-         List<Member> members = api.list();
-         assertNotNull(members);
-         assertTrue(members.size() == 2);
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/members");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/members.json")).setResponseCode(200));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        MembersApi api = etcdApi.membersApi();
+        try {
+            List<Member> members = api.list();
+            assertNotNull(members);
+            assertTrue(members.size() == 2);
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/members");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testAddMember() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testAddMember() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/members-added.json")).setResponseCode(201));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      MembersApi api = etcdApi.membersApi();
-      try {
-         String peerURL = "http://10.0.0.10:2380";
-         String clientURL = "http://10.0.0.10:2381";
-         Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), ImmutableList.of(clientURL)));
-         assertNotNull(member);
-         assertTrue(member.peerURLs().contains(peerURL));
-         assertTrue(member.clientURLs().contains(clientURL));
-         assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/members-added.json")).setResponseCode(201));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        MembersApi api = etcdApi.membersApi();
+        try {
+            String peerURL = "http://10.0.0.10:2380";
+            String clientURL = "http://10.0.0.10:2381";
+            Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), ImmutableList.of(clientURL)));
+            assertNotNull(member);
+            assertTrue(member.peerURLs().contains(peerURL));
+            assertTrue(member.clientURLs().contains(clientURL));
+            assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   @Test
-   public void testAddMemberWithMalformedURL() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    @Test
+    public void testAddMemberWithMalformedURL() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(
-            new MockResponse().setBody(payloadFromResource("/members-add-malformed-url.json")).setResponseCode(400));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      MembersApi api = etcdApi.membersApi();
-      try {
-         String peerURL = "htp:/hello/world:11bye";
-         Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
-         assertNotNull(member);
-         assertTrue(member.errorMessage().message().startsWith("URL scheme must be http or https"));
-         assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/members-add-malformed-url.json"))
+                .setResponseCode(400));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        MembersApi api = etcdApi.membersApi();
+        try {
+            String peerURL = "htp:/hello/world:11bye";
+            Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
+            assertNotNull(member);
+            assertTrue(member.errorMessage().message().startsWith("URL scheme must be http or https"));
+            assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   @Test
-   public void testAddMemberWithIllegalFormat() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    @Test
+    public void testAddMemberWithIllegalFormat() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(
-            new MockResponse().setBody(payloadFromResource("/members-add-illegal-format.json")).setResponseCode(400));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      MembersApi api = etcdApi.membersApi();
-      try {
-         String peerURL = "http://www.google.com";
-         Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
-         assertNotNull(member);
-         assertTrue(member.errorMessage().message().startsWith("URL address does not have the form"));
-         assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/members-add-illegal-format.json"))
+                .setResponseCode(400));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        MembersApi api = etcdApi.membersApi();
+        try {
+            String peerURL = "http://www.google.com";
+            Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
+            assertNotNull(member);
+            assertTrue(member.errorMessage().message().startsWith("URL address does not have the form"));
+            assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   @Test
-   public void testAddExistingMember() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    @Test
+    public void testAddExistingMember() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(
-            new MockResponse().setBody(payloadFromResource("/members-add-existent.json")).setResponseCode(409));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      MembersApi api = etcdApi.membersApi();
-      try {
-         String peerURL = "http://10.0.0.10:2380";
-         Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
-         assertNotNull(member);
-         assertTrue(member.errorMessage().message().startsWith("etcdserver: ID exists"));
-         assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(
+                new MockResponse().setBody(payloadFromResource("/members-add-existent.json")).setResponseCode(409));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        MembersApi api = etcdApi.membersApi();
+        try {
+            String peerURL = "http://10.0.0.10:2380";
+            Member member = api.add(CreateMember.create(null, ImmutableList.of(peerURL), null));
+            assertNotNull(member);
+            assertTrue(member.errorMessage().message().startsWith("etcdserver: ID exists"));
+            assertSent(server, "POST", "/" + EtcdApiMetadata.API_VERSION + "/members");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testDeleteMember() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testDeleteMember() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody("").setResponseCode(204));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      MembersApi api = etcdApi.membersApi();
-      try {
-         String memberID = "123456789";
-         boolean deleted = api.delete(memberID);
-         assertTrue(deleted);
-         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/members/" + memberID);
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody("").setResponseCode(204));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        MembersApi api = etcdApi.membersApi();
+        try {
+            String memberID = "123456789";
+            boolean deleted = api.delete(memberID);
+            assertTrue(deleted);
+            assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/members/" + memberID);
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testDeleteNonExistentMember() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testDeleteNonExistentMember() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(
-            new MockResponse().setBody(payloadFromResource("/members-delete-nonexistent.json")).setResponseCode(404));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      MembersApi api = etcdApi.membersApi();
-      try {
-         String memberID = "1234567890";
-         boolean deleted = api.delete(memberID);
-         assertFalse(deleted);
-         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/members/" + memberID);
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/members-delete-nonexistent.json"))
+                .setResponseCode(404));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        MembersApi api = etcdApi.membersApi();
+        try {
+            String memberID = "1234567890";
+            boolean deleted = api.delete(memberID);
+            assertFalse(deleted);
+            assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/members/" + memberID);
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 }

@@ -24,17 +24,17 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class LeaderInfo {
 
-   public abstract String leader();
+    public abstract String leader();
 
-   public abstract String startTime();
+    public abstract String startTime();
 
-   public abstract String uptime();
+    public abstract String uptime();
 
-   LeaderInfo() {
-   }
+    LeaderInfo() {
+    }
 
-   @SerializedNames({ "leader", "startTime", "uptime" })
-   private static LeaderInfo create(String leader, String startTime, String uptime) {
-      return new AutoValue_LeaderInfo(leader, startTime, uptime);
-   }
+    @SerializedNames({ "leader", "startTime", "uptime" })
+    private static LeaderInfo create(String leader, String startTime, String uptime) {
+        return new AutoValue_LeaderInfo(leader, startTime, uptime);
+    }
 }

@@ -28,20 +28,21 @@ import com.google.common.collect.ImmutableList;
 @AutoValue
 public abstract class CreateMember {
 
-   @Nullable
-   public abstract String name();
+    @Nullable
+    public abstract String name();
 
-   public abstract List<String> peerURLs();
+    public abstract List<String> peerURLs();
 
-   public abstract List<String> clientURLs();
+    public abstract List<String> clientURLs();
 
-   CreateMember() {
-   }
+    CreateMember() {
+    }
 
-   @SerializedNames({ "name", "peerURLs", "clientURLs" })
-   public static CreateMember create(String name, List<String> peerURLs, List<String> clientURLs) {
-      if (clientURLs == null)
-         clientURLs = ImmutableList.of();
-      return new AutoValue_CreateMember(name, ImmutableList.copyOf(peerURLs), ImmutableList.copyOf(clientURLs));
-   }
+    @SerializedNames({ "name", "peerURLs", "clientURLs" })
+    public static CreateMember create(String name, List<String> peerURLs, List<String> clientURLs) {
+        if (clientURLs == null) {
+            clientURLs = ImmutableList.of();
+        }
+        return new AutoValue_CreateMember(name, ImmutableList.copyOf(peerURLs), ImmutableList.copyOf(clientURLs));
+    }
 }

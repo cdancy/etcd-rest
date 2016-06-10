@@ -28,25 +28,25 @@ import autovalue.shaded.com.google.common.common.collect.ImmutableList;
 @AutoValue
 public abstract class CreateUserOptions {
 
-   public abstract String user();
+    public abstract String user();
 
-   public abstract String password();
+    public abstract String password();
 
-   public abstract List<String> roles();
+    public abstract List<String> roles();
 
-   public abstract List<String> grant();
+    public abstract List<String> grant();
 
-   public abstract List<String> revoke();
+    public abstract List<String> revoke();
 
-   CreateUserOptions() {
-   }
+    CreateUserOptions() {
+    }
 
-   @SerializedNames({ "user", "password", "roles", "grant", "revoke" })
-   public static CreateUserOptions create(String user, String password, List<String> roles, List<String> grant,
-         List<String> revoke) {
-      return new AutoValue_CreateUserOptions(user, password,
-            roles != null ? ImmutableList.copyOf(roles) : ImmutableList.<String> of(),
-            grant != null ? ImmutableList.copyOf(grant) : ImmutableList.<String> of(),
-            revoke != null ? ImmutableList.copyOf(revoke) : ImmutableList.<String> of());
-   }
+    @SerializedNames({ "user", "password", "roles", "grant", "revoke" })
+    public static CreateUserOptions create(String user, String password, List<String> roles, List<String> grant,
+            List<String> revoke) {
+        return new AutoValue_CreateUserOptions(user, password,
+                roles != null ? ImmutableList.copyOf(roles) : ImmutableList.<String> of(),
+                grant != null ? ImmutableList.copyOf(grant) : ImmutableList.<String> of(),
+                revoke != null ? ImmutableList.copyOf(revoke) : ImmutableList.<String> of());
+    }
 }

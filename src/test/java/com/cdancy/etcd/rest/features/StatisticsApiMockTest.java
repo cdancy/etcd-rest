@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertNotNull;
@@ -26,7 +27,6 @@ import com.cdancy.etcd.rest.EtcdApiMetadata;
 import com.cdancy.etcd.rest.domain.statistics.Leader;
 import com.cdancy.etcd.rest.domain.statistics.Self;
 import com.cdancy.etcd.rest.domain.statistics.Store;
-import com.cdancy.etcd.rest.features.StatisticsApi;
 import com.cdancy.etcd.rest.internal.BaseEtcdMockTest;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -37,55 +37,55 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 @Test(groups = "unit", testName = "StatisticsApiMockTest")
 public class StatisticsApiMockTest extends BaseEtcdMockTest {
 
-   public void testGetLeader() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetLeader() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/leader.json")).setResponseCode(200));
-      EtcdApi etcdJavaApi = api(server.getUrl("/"));
-      StatisticsApi api = etcdJavaApi.statisticsApi();
-      try {
-         Leader leader = api.leader();
-         assertNotNull(leader);
-         assertTrue(leader.followers().size() == 2);
-         assertTrue(leader.leader().equals("924e2e83e93f2560"));
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/stats/leader");
-      } finally {
-         etcdJavaApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/leader.json")).setResponseCode(200));
+        EtcdApi etcdJavaApi = api(server.getUrl("/"));
+        StatisticsApi api = etcdJavaApi.statisticsApi();
+        try {
+            Leader leader = api.leader();
+            assertNotNull(leader);
+            assertTrue(leader.followers().size() == 2);
+            assertTrue(leader.leader().equals("924e2e83e93f2560"));
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/stats/leader");
+        } finally {
+            etcdJavaApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testGetSelf() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetSelf() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/self.json")).setResponseCode(200));
-      EtcdApi etcdJavaApi = api(server.getUrl("/"));
-      StatisticsApi api = etcdJavaApi.statisticsApi();
-      try {
-         Self self = api.self();
-         assertNotNull(self);
-         assertTrue(self.leaderInfo().leader().equals("924e2e83e93f2560"));
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/stats/self");
-      } finally {
-         etcdJavaApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/self.json")).setResponseCode(200));
+        EtcdApi etcdJavaApi = api(server.getUrl("/"));
+        StatisticsApi api = etcdJavaApi.statisticsApi();
+        try {
+            Self self = api.self();
+            assertNotNull(self);
+            assertTrue(self.leaderInfo().leader().equals("924e2e83e93f2560"));
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/stats/self");
+        } finally {
+            etcdJavaApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testGetStore() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetStore() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/store.json")).setResponseCode(200));
-      EtcdApi etcdJavaApi = api(server.getUrl("/"));
-      StatisticsApi api = etcdJavaApi.statisticsApi();
-      try {
-         Store store = api.store();
-         assertNotNull(store);
-         assertTrue(store.getsSuccess() == 75);
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/stats/store");
-      } finally {
-         etcdJavaApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/store.json")).setResponseCode(200));
+        EtcdApi etcdJavaApi = api(server.getUrl("/"));
+        StatisticsApi api = etcdJavaApi.statisticsApi();
+        try {
+            Store store = api.store();
+            assertNotNull(store);
+            assertTrue(store.getsSuccess() == 75);
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/stats/store");
+        } finally {
+            etcdJavaApi.close();
+            server.shutdown();
+        }
+    }
 }

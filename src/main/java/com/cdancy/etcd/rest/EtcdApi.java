@@ -31,24 +31,24 @@ import com.cdancy.etcd.rest.features.UsersApi;
 
 public interface EtcdApi extends Closeable {
 
-   @Delegate
-   AuthApi authApi();
+    @Delegate
+    AuthApi authApi();
 
-   @Delegate
-   KeysApi keysApi();
+    @Delegate
+    KeysApi keysApi();
 
-   @Delegate
-   MembersApi membersApi();
+    @Delegate
+    MembersApi membersApi();
 
-   @Delegate
-   MiscellaneousApi miscellaneousApi();
+    @Delegate
+    MiscellaneousApi miscellaneousApi();
 
-   @Delegate
-   RolesApi rolesApi();
+    @Delegate
+    RolesApi rolesApi();
 
-   @Delegate
-   StatisticsApi statisticsApi();
+    @Delegate
+    StatisticsApi statisticsApi();
 
-   @Delegate
-   UsersApi usersApi();
+    @Delegate
+    UsersApi usersApi();
 }

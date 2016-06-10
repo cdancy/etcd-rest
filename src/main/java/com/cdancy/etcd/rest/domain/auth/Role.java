@@ -26,26 +26,26 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Role {
 
-   public abstract String role();
+    public abstract String role();
 
-   @Nullable
-   public abstract Permission permissions();
+    @Nullable
+    public abstract Permission permissions();
 
-   @Nullable
-   public abstract Grant grant();
+    @Nullable
+    public abstract Grant grant();
 
-   @Nullable
-   public abstract Revoke revoke();
+    @Nullable
+    public abstract Revoke revoke();
 
-   @Nullable
-   public abstract ErrorMessage errorMessage();
+    @Nullable
+    public abstract ErrorMessage errorMessage();
 
-   Role() {
-   }
+    Role() {
+    }
 
-   @SerializedNames({ "role", "permissions", "grant", "revoke", "errorMessage" })
-   public static Role create(String role, Permission permissions, Grant grant, Revoke revoke,
-         ErrorMessage errorMessage) {
-      return new AutoValue_Role(role, permissions, grant, revoke, errorMessage);
-   }
+    @SerializedNames({ "role", "permissions", "grant", "revoke", "errorMessage" })
+    public static Role create(String role, Permission permissions, Grant grant, Revoke revoke,
+            ErrorMessage errorMessage) {
+        return new AutoValue_Role(role, permissions, grant, revoke, errorMessage);
+    }
 }

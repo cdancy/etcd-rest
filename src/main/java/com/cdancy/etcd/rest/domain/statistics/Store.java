@@ -24,45 +24,45 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Store {
 
-   public abstract int compareAndSwapFail();
+    public abstract int compareAndSwapFail();
 
-   public abstract int compareAndSwapSuccess();
+    public abstract int compareAndSwapSuccess();
 
-   public abstract int createFail();
+    public abstract int createFail();
 
-   public abstract int createSuccess();
+    public abstract int createSuccess();
 
-   public abstract int deleteFail();
+    public abstract int deleteFail();
 
-   public abstract int deleteSuccess();
+    public abstract int deleteSuccess();
 
-   public abstract int expireCount();
+    public abstract int expireCount();
 
-   public abstract int getsFail();
+    public abstract int getsFail();
 
-   public abstract int getsSuccess();
+    public abstract int getsSuccess();
 
-   public abstract int setsFail();
+    public abstract int setsFail();
 
-   public abstract int setsSuccess();
+    public abstract int setsSuccess();
 
-   public abstract int updateFail();
+    public abstract int updateFail();
 
-   public abstract int updateSuccess();
+    public abstract int updateSuccess();
 
-   public abstract int watchers();
+    public abstract int watchers();
 
-   Store() {
-   }
+    Store() {
+    }
 
-   @SerializedNames({ "compareAndSwapFail", "compareAndSwapSuccess", "createFail", "createSuccess", "deleteFail",
-         "deleteSuccess", "expireCount", "getsFail", "getsSuccess", "setsFail", "setsSuccess", "updateFail",
-         "updateSuccess", "watchers" })
-   private static Store create(int compareAndSwapFail, int compareAndSwapSuccess, int createFail, int createSuccess,
-         int deleteFail, int deleteSuccess, int expireCount, int getsFail, int getsSuccess, int setsFail,
-         int setsSuccess, int updateFail, int updateSuccess, int watchers) {
-      return new AutoValue_Store(compareAndSwapFail, compareAndSwapSuccess, createFail, createSuccess, deleteFail,
-            deleteSuccess, expireCount, getsFail, getsSuccess, setsFail, setsSuccess, updateFail, updateSuccess,
-            watchers);
-   }
+    @SerializedNames({ "compareAndSwapFail", "compareAndSwapSuccess", "createFail", "createSuccess", "deleteFail",
+            "deleteSuccess", "expireCount", "getsFail", "getsSuccess", "setsFail", "setsSuccess", "updateFail",
+            "updateSuccess", "watchers" })
+    private static Store create(int compareAndSwapFail, int compareAndSwapSuccess, int createFail, int createSuccess,
+            int deleteFail, int deleteSuccess, int expireCount, int getsFail, int getsSuccess, int setsFail,
+            int setsSuccess, int updateFail, int updateSuccess, int watchers) {
+        return new AutoValue_Store(compareAndSwapFail, compareAndSwapSuccess, createFail, createSuccess, deleteFail,
+                deleteSuccess, expireCount, getsFail, getsSuccess, setsFail, setsSuccess, updateFail, updateSuccess,
+                watchers);
+    }
 }

@@ -24,15 +24,15 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Counts {
 
-   public abstract int fail();
+    public abstract int fail();
 
-   public abstract int success();
+    public abstract int success();
 
-   Counts() {
-   }
+    Counts() {
+    }
 
-   @SerializedNames({ "fail", "success" })
-   private static Counts create(int fail, int success) {
-      return new AutoValue_Counts(fail, success);
-   }
+    @SerializedNames({ "fail", "success" })
+    private static Counts create(int fail, int success) {
+        return new AutoValue_Counts(fail, success);
+    }
 }

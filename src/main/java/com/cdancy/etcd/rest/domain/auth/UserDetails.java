@@ -30,19 +30,19 @@ import autovalue.shaded.com.google.common.common.collect.ImmutableList;
 @AutoValue
 public abstract class UserDetails {
 
-   public abstract String user();
+    public abstract String user();
 
-   public abstract List<Role> roles();
+    public abstract List<Role> roles();
 
-   @Nullable
-   public abstract ErrorMessage errorMessage();
+    @Nullable
+    public abstract ErrorMessage errorMessage();
 
-   UserDetails() {
-   }
+    UserDetails() {
+    }
 
-   @SerializedNames({ "user", "roles", "errorMessage" })
-   public static UserDetails create(String user, List<Role> roles, ErrorMessage errorMessage) {
-      return new AutoValue_UserDetails(user, roles != null ? ImmutableList.copyOf(roles) : ImmutableList.<Role> of(),
-            errorMessage);
-   }
+    @SerializedNames({ "user", "roles", "errorMessage" })
+    public static UserDetails create(String user, List<Role> roles, ErrorMessage errorMessage) {
+        return new AutoValue_UserDetails(user, roles != null ? ImmutableList.copyOf(roles) : ImmutableList.<Role> of(),
+                errorMessage);
+    }
 }

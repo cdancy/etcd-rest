@@ -29,7 +29,6 @@ import org.jclouds.apis.Apis;
 import org.jclouds.apis.internal.BaseApiMetadataTest;
 import org.testng.annotations.Test;
 
-import com.cdancy.etcd.rest.EtcdApiMetadata;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -38,15 +37,15 @@ import com.google.common.reflect.TypeToken;
 @Test(groups = "unit", testName = "EtcdApiMetadataTest")
 public class EtcdApiMetadataTest extends BaseApiMetadataTest {
 
-   public EtcdApiMetadataTest() {
-      super(new EtcdApiMetadata(), new HashSet<TypeToken<? extends View>>());
-   }
+    public EtcdApiMetadataTest() {
+        super(new EtcdApiMetadata(), new HashSet<TypeToken<? extends View>>());
+    }
 
-   public void testEtcdApiRegistered() {
-      ApiMetadata api = Apis.withId("etcd");
+    public void testEtcdApiRegistered() {
+        ApiMetadata api = Apis.withId("etcd");
 
-      assertNotNull(api);
-      assertTrue(api instanceof EtcdApiMetadata);
-      assertEquals(api.getId(), "etcd");
-   }
+        assertNotNull(api);
+        assertTrue(api instanceof EtcdApiMetadata);
+        assertEquals(api.getId(), "etcd");
+    }
 }

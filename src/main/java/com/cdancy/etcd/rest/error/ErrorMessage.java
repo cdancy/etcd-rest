@@ -25,21 +25,21 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class ErrorMessage {
 
-   public abstract int errorCode();
+    public abstract int errorCode();
 
-   @Nullable
-   public abstract String message();
+    @Nullable
+    public abstract String message();
 
-   @Nullable
-   public abstract String cause();
+    @Nullable
+    public abstract String cause();
 
-   public abstract int index();
+    public abstract int index();
 
-   ErrorMessage() {
-   }
+    ErrorMessage() {
+    }
 
-   @SerializedNames({ "errorCode", "message", "cause", "index" })
-   public static ErrorMessage create(int errorCode, String message, String cause, int index) {
-      return new AutoValue_ErrorMessage(errorCode, message, cause, index);
-   }
+    @SerializedNames({ "errorCode", "message", "cause", "index" })
+    public static ErrorMessage create(int errorCode, String message, String cause, int index) {
+        return new AutoValue_ErrorMessage(errorCode, message, cause, index);
+    }
 }

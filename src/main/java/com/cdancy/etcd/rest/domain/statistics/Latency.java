@@ -24,22 +24,22 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Latency {
 
-   public abstract double average();
+    public abstract double average();
 
-   public abstract double current();
+    public abstract double current();
 
-   public abstract double maximum();
+    public abstract double maximum();
 
-   public abstract double minimum();
+    public abstract double minimum();
 
-   public abstract double standardDeviation();
+    public abstract double standardDeviation();
 
-   Latency() {
-   }
+    Latency() {
+    }
 
-   @SerializedNames({ "average", "current", "maximum", "minimum", "standardDeviation" })
-   private static Latency create(double average, double current, double maximum, double minimum,
-         double standardDeviation) {
-      return new AutoValue_Latency(average, current, maximum, minimum, standardDeviation);
-   }
+    @SerializedNames({ "average", "current", "maximum", "minimum", "standardDeviation" })
+    private static Latency create(double average, double current, double maximum, double minimum,
+            double standardDeviation) {
+        return new AutoValue_Latency(average, current, maximum, minimum, standardDeviation);
+    }
 }

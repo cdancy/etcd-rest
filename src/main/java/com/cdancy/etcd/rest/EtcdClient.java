@@ -22,126 +22,166 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.jclouds.ContextBuilder;
+import org.jclouds.javax.annotation.Nullable;
 
 public class EtcdClient {
 
-   private String endPoint;
-   private String credentials;
-   private final EtcdApi etcdApi;
+    private static String[] endPointProperties = { "etcd.rest.endpoint", "etcdRestEndpoint", "ETCD_REST_ENDPOINT",
+            "ETCD_LISTEN_CLIENT_URLS", "ETCD_ADVERTISE_CLIENT_URLS" };
+    private static String[] credentialsProperties = { "etcd.rest.credentials", "etcdRestCredentials",
+            "ETCD_REST_CREDENTIALS" };
+    private String endPoint;
+    private String credentials;
+    private final EtcdApi etcdApi;
 
-   public EtcdClient(final String endPoint, final String credentials) {
-      this.endPoint = endPoint;
-      this.credentials = credentials;
+    /**
+     * Create an EtcdClient. We will query system properties and environment
+     * variables for the endPoint and credentials.
+     */
+    public EtcdClient() {
+        configureParameters();
 
-      configureParameters();
+        this.etcdApi = ContextBuilder.newBuilder(new EtcdApiMetadata.Builder().build()).endpoint(endPoint())
+                .credentials("N/A", credentials()).buildApi(EtcdApi.class);
+    }
 
-      this.etcdApi = ContextBuilder.newBuilder(new EtcdApiMetadata.Builder().build()).endpoint(endPoint())
-            .credentials("N/A", credentials()).buildApi(EtcdApi.class);
-   }
+    /**
+     * Create an EtcdClient.
+     * 
+     * @param endPoint
+     *            url of etcd instance
+     * @param credentials
+     *            the optional credentials for the etcd instance
+     */
+    public EtcdClient(final String endPoint, @Nullable final String credentials) {
+        this.endPoint = endPoint;
+        this.credentials = credentials;
 
-   private void configureParameters() {
+        this.etcdApi = ContextBuilder.newBuilder(new EtcdApiMetadata.Builder().build()).endpoint(endPoint())
+                .credentials("N/A", credentials()).buildApi(EtcdApi.class);
+    }
 
-      // query system for endPoint value
-      if (endPoint == null) {
-         if ((endPoint = retrivePropertyValue("etcd.rest.endpoint")) == null) {
-            if ((endPoint = retrivePropertyValue("etcdRestEndpoint")) == null) {
-               if ((endPoint = retrivePropertyValue("ETCD_REST_ENDPOINT")) == null) {
-                  if ((endPoint = checkClient("ETCD_LISTEN_CLIENT_URLS")) == null) {
-                     if ((endPoint = checkClient("ETCD_ADVERTISE_CLIENT_URLS")) == null) {
-                        endPoint = "http://127.0.0.1:2379";
-                        System.out.println("Etcd REST endpoint was not found. Defaulting to: " + endPoint);
-                     }
-                  }
-               }
+    /**
+     * Configure the endPoint and credentials by querying the system, and then
+     * the environment, for the relevant property names.
+     */
+    private void configureParameters() {
+
+        // query system for endPoint value
+        if (endPoint == null) {
+            endPoint = retrivePropertyValue(true, endPointProperties);
+        }
+
+        // query system for credentials value
+        if (credentials == null) {
+            credentials = retrivePropertyValue(false, credentialsProperties);
+        }
+    }
+
+    /**
+     * Retrieve property value while optionally pinging, if it is found, to see
+     * if it is reachable.
+     * 
+     * @param ping
+     *            whether to ping URL
+     * @param keys
+     *            list of keys to search
+     * @return the first value found from list of keys
+     */
+    public String retrivePropertyValue(boolean ping, String... keys) {
+        String value = null;
+        for (String possibleKey : keys) {
+            value = retrivePropertyValue(possibleKey);
+            if (value != null) {
+                if (ping) {
+                    if (EtcdClient.pingEtcdURL(value, 60000)) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
             }
-         }
-      }
+        }
+        return value;
+    }
 
-      // query system for credentials value
-      if (credentials == null) {
-         if ((credentials = retrivePropertyValue("etcd.rest.credentials")) == null) {
-            if ((credentials = retrivePropertyValue("etcdRestCredentials")) == null) {
-               if ((credentials = retrivePropertyValue("ETCD_REST_CREDENTIALS")) == null) {
-                  credentials = "";
-                  System.out.println("Etcd REST credentials was not found. Assuming anonymous usage.");
-               }
+    /**
+     * Check system properties, and then environment variables, for value of
+     * key.
+     * 
+     * @param key
+     *            the key to search for
+     * @return the value of key or null if not found
+     */
+    public String retrivePropertyValue(String key) {
+        String value = System.getProperty(key);
+        return value != null ? value : System.getenv(key);
+    }
+
+    public String endPoint() {
+        return endPoint;
+    }
+
+    public String credentials() {
+        return credentials;
+    }
+
+    public EtcdApi api() {
+        return etcdApi;
+    }
+
+    public static class Builder {
+        private String endPoint;
+        private String credentials;
+
+        public Builder() {
+        }
+
+        public Builder(final String endPoint, final String credentials) {
+            this.endPoint = endPoint;
+            this.credentials = credentials;
+        }
+
+        public Builder endPoint(String endPoint) {
+            this.endPoint = endPoint;
+            return this;
+        }
+
+        public Builder credentials(String credentials) {
+            this.credentials = credentials;
+            return this;
+        }
+
+        public EtcdClient build() {
+            return new EtcdClient(endPoint, credentials);
+        }
+    }
+
+    /**
+     * Ping etcd URL to see if it is reachable.
+     * 
+     * @param url
+     *            the url to ping
+     * @param timeout
+     *            the timeout value to wait for ping
+     * @return true if pingable, false otherwise
+     */
+    public static boolean pingEtcdURL(String url, int timeout) {
+        url = url.replaceFirst("^https", "http");
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) new URL(url + "/version").openConnection();
+            connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout);
+            connection.setRequestMethod("GET");
+            int responseCode = connection.getResponseCode();
+            return (200 <= responseCode && responseCode <= 399);
+        } catch (IOException exception) {
+            return false;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
             }
-         }
-      }
-   }
-
-   public String retrivePropertyValue(String key) {
-      String value = System.getProperty(key);
-      return value != null ? value : System.getenv(key);
-   }
-
-   public String checkClient(String key) {
-      String clientList = retrivePropertyValue(key);
-      if (clientList != null) {
-         for (String possibleClient : clientList.split(",")) {
-            if (EtcdClient.pingEtcdURL(possibleClient, 60000)) {
-               return possibleClient;
-            }
-         }
-      }
-      return null;
-   }
-
-   public String endPoint() {
-      return endPoint;
-   }
-
-   public String credentials() {
-      return credentials;
-   }
-
-   public EtcdApi api() {
-      return etcdApi;
-   }
-
-   public static class Builder {
-      private String endPoint;
-      private String credentials;
-
-      public Builder() {
-      }
-
-      public Builder(final String endPoint, final String credentials) {
-         this.endPoint = endPoint;
-         this.credentials = credentials;
-      }
-
-      public Builder endPoint(String endPoint) {
-         this.endPoint = endPoint;
-         return this;
-      }
-
-      public Builder credentials(String credentials) {
-         this.credentials = credentials;
-         return this;
-      }
-
-      public EtcdClient build() {
-         return new EtcdClient(endPoint, credentials);
-      }
-   }
-
-   public static boolean pingEtcdURL(String url, int timeout) {
-      url = url.replaceFirst("^https", "http");
-      HttpURLConnection connection = null;
-      try {
-         connection = (HttpURLConnection) new URL(url + "/version").openConnection();
-         connection.setConnectTimeout(timeout);
-         connection.setReadTimeout(timeout);
-         connection.setRequestMethod("GET");
-         int responseCode = connection.getResponseCode();
-         return (200 <= responseCode && responseCode <= 399);
-      } catch (IOException exception) {
-         return false;
-      } finally {
-         if (connection != null) {
-            connection.disconnect();
-         }
-      }
-   }
+        }
+    }
 }

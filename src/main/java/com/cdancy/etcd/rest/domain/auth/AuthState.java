@@ -26,16 +26,16 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class AuthState {
 
-   public abstract boolean enabled();
+    public abstract boolean enabled();
 
-   @Nullable
-   public abstract ErrorMessage errorMessage();
+    @Nullable
+    public abstract ErrorMessage errorMessage();
 
-   AuthState() {
-   }
+    AuthState() {
+    }
 
-   @SerializedNames({ "enabled", "errorMessage" })
-   public static AuthState create(boolean enabled, ErrorMessage errorMessage) {
-      return new AutoValue_AuthState(enabled, errorMessage);
-   }
+    @SerializedNames({ "enabled", "errorMessage" })
+    public static AuthState create(boolean enabled, ErrorMessage errorMessage) {
+        return new AutoValue_AuthState(enabled, errorMessage);
+    }
 }

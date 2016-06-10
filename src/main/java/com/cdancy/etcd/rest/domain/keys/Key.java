@@ -26,23 +26,23 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Key {
 
-   @Nullable
-   public abstract String action();
+    @Nullable
+    public abstract String action();
 
-   @Nullable
-   public abstract Node node();
+    @Nullable
+    public abstract Node node();
 
-   @Nullable
-   public abstract Node prevNode();
+    @Nullable
+    public abstract Node prevNode();
 
-   @Nullable
-   public abstract ErrorMessage errorMessage();
+    @Nullable
+    public abstract ErrorMessage errorMessage();
 
-   Key() {
-   }
+    Key() {
+    }
 
-   @SerializedNames({ "action", "node", "prevNode", "errorMessage" })
-   public static Key create(String action, Node node, Node prevNode, ErrorMessage errorMessage) {
-      return new AutoValue_Key(action, node, prevNode, errorMessage);
-   }
+    @SerializedNames({ "action", "node", "prevNode", "errorMessage" })
+    public static Key create(String action, Node node, Node prevNode, ErrorMessage errorMessage) {
+        return new AutoValue_Key(action, node, prevNode, errorMessage);
+    }
 }

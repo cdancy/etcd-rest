@@ -27,16 +27,16 @@ import com.google.common.collect.ImmutableList;
 @AutoValue
 public abstract class KeyValue {
 
-   public abstract List<String> read();
+    public abstract List<String> read();
 
-   public abstract List<String> write();
+    public abstract List<String> write();
 
-   KeyValue() {
-   }
+    KeyValue() {
+    }
 
-   @SerializedNames({ "read", "write" })
-   public static KeyValue create(List<String> read, List<String> write) {
-      return new AutoValue_KeyValue(read != null ? ImmutableList.copyOf(read) : ImmutableList.<String> of(),
-            write != null ? ImmutableList.copyOf(write) : ImmutableList.<String> of());
-   }
+    @SerializedNames({ "read", "write" })
+    public static KeyValue create(List<String> read, List<String> write) {
+        return new AutoValue_KeyValue(read != null ? ImmutableList.copyOf(read) : ImmutableList.<String> of(),
+                write != null ? ImmutableList.copyOf(write) : ImmutableList.<String> of());
+    }
 }

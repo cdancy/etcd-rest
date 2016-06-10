@@ -24,13 +24,13 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Revoke {
 
-   public abstract KeyValue kv();
+    public abstract KeyValue kv();
 
-   Revoke() {
-   }
+    Revoke() {
+    }
 
-   @SerializedNames({ "kv" })
-   public static Revoke create(KeyValue kv) {
-      return new AutoValue_Revoke(kv);
-   }
+    @SerializedNames({ "kv" })
+    public static Revoke create(KeyValue kv) {
+        return new AutoValue_Revoke(kv);
+    }
 }

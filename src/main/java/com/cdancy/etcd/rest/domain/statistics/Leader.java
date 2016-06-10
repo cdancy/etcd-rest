@@ -27,15 +27,15 @@ import com.google.common.collect.ImmutableMap;
 @AutoValue
 public abstract class Leader {
 
-   public abstract String leader();
+    public abstract String leader();
 
-   public abstract Map<String, Follower> followers();
+    public abstract Map<String, Follower> followers();
 
-   Leader() {
-   }
+    Leader() {
+    }
 
-   @SerializedNames({ "leader", "followers" })
-   private static Leader create(String leader, Map<String, Follower> followers) {
-      return new AutoValue_Leader(leader, ImmutableMap.copyOf(followers));
-   }
+    @SerializedNames({ "leader", "followers" })
+    private static Leader create(String leader, Map<String, Follower> followers) {
+        return new AutoValue_Leader(leader, ImmutableMap.copyOf(followers));
+    }
 }

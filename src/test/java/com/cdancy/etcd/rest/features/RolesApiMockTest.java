@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertFalse;
@@ -41,128 +42,131 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 @Test(groups = "unit", testName = "RolesApiMockTest")
 public class RolesApiMockTest extends BaseEtcdMockTest {
 
-   public void testCreateRole() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testCreateRole() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-roles-create.json")).setResponseCode(201));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      RolesApi api = etcdApi.rolesApi();
-      try {
-         Permission permission = Permission.create(KeyValue.create(Lists.newArrayList("*"), Lists.newArrayList("*")));
-         Role createRole = Role.create("rkt", permission, null, null, null);
-         Role roles = api.create("rkt", createRole);
-         assertNotNull(roles);
-         assertTrue(roles.role().equals("rkt"));
-         assertNotNull(roles.permissions());
-         assertNotNull(roles.permissions().kv().read().contains("*"));
-         assertNotNull(roles.permissions().kv().write().contains("*"));
-         assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/rkt");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-roles-create.json")).setResponseCode(201));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        RolesApi api = etcdApi.rolesApi();
+        try {
+            Permission permission = Permission
+                    .create(KeyValue.create(Lists.newArrayList("*"), Lists.newArrayList("*")));
+            Role createRole = Role.create("rkt", permission, null, null, null);
+            Role roles = api.create("rkt", createRole);
+            assertNotNull(roles);
+            assertTrue(roles.role().equals("rkt"));
+            assertNotNull(roles.permissions());
+            assertNotNull(roles.permissions().kv().read().contains("*"));
+            assertNotNull(roles.permissions().kv().write().contains("*"));
+            assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/rkt");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testCreateRoleAlreadyExists() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testCreateRoleAlreadyExists() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(
-            new MockResponse().setBody(payloadFromResource("/auth-roles-create-exists.json")).setResponseCode(409));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      RolesApi api = etcdApi.rolesApi();
-      try {
-         Permission permission = Permission.create(KeyValue.create(Lists.newArrayList("*"), Lists.newArrayList("*")));
-         Role createRole = Role.create("rkt", permission, null, null, null);
-         Role roles = api.create("rkt", createRole);
-         assertNotNull(roles);
-         assertTrue(roles.role().equals("rkt"));
-         assertNotNull(roles.errorMessage());
-         assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/rkt");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(
+                new MockResponse().setBody(payloadFromResource("/auth-roles-create-exists.json")).setResponseCode(409));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        RolesApi api = etcdApi.rolesApi();
+        try {
+            Permission permission = Permission
+                    .create(KeyValue.create(Lists.newArrayList("*"), Lists.newArrayList("*")));
+            Role createRole = Role.create("rkt", permission, null, null, null);
+            Role roles = api.create("rkt", createRole);
+            assertNotNull(roles);
+            assertTrue(roles.role().equals("rkt"));
+            assertNotNull(roles.errorMessage());
+            assertSent(server, "PUT", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/rkt");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testListRoles() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testListRoles() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-roles-list.json")).setResponseCode(200));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      RolesApi api = etcdApi.rolesApi();
-      try {
-         List<Role> roles = api.list();
-         assertNotNull(roles);
-         assertTrue(roles.size() == 3);
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-roles-list.json")).setResponseCode(200));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        RolesApi api = etcdApi.rolesApi();
+        try {
+            List<Role> roles = api.list();
+            assertNotNull(roles);
+            assertTrue(roles.size() == 3);
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testGetRoleDetails() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetRoleDetails() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setBody(payloadFromResource("/auth-roles-details.json")).setResponseCode(200));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      RolesApi api = etcdApi.rolesApi();
-      try {
-         Role roles = api.get("fleet");
-         assertNotNull(roles);
-         assertTrue(roles.role().equals("fleet"));
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/fleet");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(
+                new MockResponse().setBody(payloadFromResource("/auth-roles-details.json")).setResponseCode(200));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        RolesApi api = etcdApi.rolesApi();
+        try {
+            Role roles = api.get("fleet");
+            assertNotNull(roles);
+            assertTrue(roles.role().equals("fleet"));
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/fleet");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testGetRoleDetailsNotFound() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testGetRoleDetailsNotFound() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setResponseCode(404));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      RolesApi api = etcdApi.rolesApi();
-      try {
-         Role roles = api.get("random");
-         assertNull(roles);
-         assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/random");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setResponseCode(404));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        RolesApi api = etcdApi.rolesApi();
+        try {
+            Role roles = api.get("random");
+            assertNull(roles);
+            assertSent(server, "GET", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/random");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testDeleteRole() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testDeleteRole() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setResponseCode(200));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      RolesApi api = etcdApi.rolesApi();
-      try {
-         boolean success = api.delete("random");
-         assertTrue(success);
-         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/random");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setResponseCode(200));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        RolesApi api = etcdApi.rolesApi();
+        try {
+            boolean success = api.delete("random");
+            assertTrue(success);
+            assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/random");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 
-   public void testDeleteRoleNotFound() throws Exception {
-      MockWebServer server = mockEtcdJavaWebServer();
+    public void testDeleteRoleNotFound() throws Exception {
+        MockWebServer server = mockEtcdJavaWebServer();
 
-      server.enqueue(new MockResponse().setResponseCode(404));
-      EtcdApi etcdApi = api(server.getUrl("/"));
-      RolesApi api = etcdApi.rolesApi();
-      try {
-         boolean success = api.delete("random");
-         assertFalse(success);
-         assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/random");
-      } finally {
-         etcdApi.close();
-         server.shutdown();
-      }
-   }
+        server.enqueue(new MockResponse().setResponseCode(404));
+        EtcdApi etcdApi = api(server.getUrl("/"));
+        RolesApi api = etcdApi.rolesApi();
+        try {
+            boolean success = api.delete("random");
+            assertFalse(success);
+            assertSent(server, "DELETE", "/" + EtcdApiMetadata.API_VERSION + "/auth/roles/random");
+        } finally {
+            etcdApi.close();
+            server.shutdown();
+        }
+    }
 }

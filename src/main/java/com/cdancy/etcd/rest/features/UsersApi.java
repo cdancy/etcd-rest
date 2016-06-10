@@ -47,26 +47,26 @@ import com.cdancy.etcd.rest.options.CreateUserOptions;
 @Path("/{jclouds.api-version}/auth/users")
 public interface UsersApi {
 
-   @Named("auth-user:create")
-   @Path("/{user}")
-   @Fallback(UserOnAlreadyExists.class)
-   @PUT
-   User create(@PathParam("user") String user, @BinderParam(BindToJsonPayload.class) CreateUserOptions options);
+    @Named("auth-user:create")
+    @Path("/{user}")
+    @Fallback(UserOnAlreadyExists.class)
+    @PUT
+    User create(@PathParam("user") String user, @BinderParam(BindToJsonPayload.class) CreateUserOptions options);
 
-   @Named("auth-user:list")
-   @SelectJson("users")
-   @GET
-   List<UserDetails> list();
+    @Named("auth-user:list")
+    @SelectJson("users")
+    @GET
+    List<UserDetails> list();
 
-   @Named("auth-user:get")
-   @Path("/{user}")
-   @Fallback(NullOnNotFoundOr404.class)
-   @GET
-   UserDetails get(@PathParam("user") String user);
+    @Named("auth-user:get")
+    @Path("/{user}")
+    @Fallback(NullOnNotFoundOr404.class)
+    @GET
+    UserDetails get(@PathParam("user") String user);
 
-   @Named("auth-user:delete")
-   @Path("/{user}")
-   @Fallback(FalseOnNotFoundOr404.class)
-   @DELETE
-   boolean delete(@PathParam("user") String user);
+    @Named("auth-user:delete")
+    @Path("/{user}")
+    @Fallback(FalseOnNotFoundOr404.class)
+    @DELETE
+    boolean delete(@PathParam("user") String user);
 }

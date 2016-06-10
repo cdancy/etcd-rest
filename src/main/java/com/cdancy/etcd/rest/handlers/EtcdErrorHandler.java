@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.handlers;
 
 import static org.jclouds.util.Closeables2.closeQuietly;
@@ -34,69 +35,69 @@ import org.jclouds.util.Strings2;
 import com.google.common.base.Throwables;
 
 /**
- * Handle errors and propagate exception
+ * Handle errors and propagate exception.
  */
 public class EtcdErrorHandler implements HttpErrorHandler {
-   @Resource
-   protected Logger logger = Logger.NULL;
+    @Resource
+    private Logger logger = Logger.NULL;
 
-   public void handleError(HttpCommand command, HttpResponse response) {
+    @Override
+    public void handleError(HttpCommand command, HttpResponse response) {
 
-      String message = parseMessage(response);
-      Exception exception = null;
-      try {
+        String message = parseMessage(response);
+        Exception exception = null;
+        try {
 
-         message = message != null ? message
-               : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(), response.getStatusLine());
+            message = message != null ? message
+                    : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(), response.getStatusLine());
 
-         switch (response.getStatusCode()) {
+            switch (response.getStatusCode()) {
             case 400:
-               exception = new IllegalArgumentException(message);
-               break;
+                exception = new IllegalArgumentException(message);
+                break;
             case 403:
-               if (command.getCurrentRequest().getMethod().equals("PUT")) {
-                  if (command.getCurrentRequest().getRequestLine().contains("/keys/")) {
-                     if (message.contains("Not a file")) {
-                        exception = new ResourceAlreadyExistsException(message);
-                        break;
-                     }
-                  }
-               }
+                if (command.getCurrentRequest().getMethod().equals("PUT")) {
+                    if (command.getCurrentRequest().getRequestLine().contains("/keys/")) {
+                        if (message.contains("Not a file")) {
+                            exception = new ResourceAlreadyExistsException(message);
+                            break;
+                        }
+                    }
+                }
             case 404:
-               exception = new ResourceNotFoundException(message);
-               break;
+                exception = new ResourceNotFoundException(message);
+                break;
             case 409:
-               exception = new ResourceAlreadyExistsException(message);
-               break;
+                exception = new ResourceAlreadyExistsException(message);
+                break;
             case 412:
-               if (command.getCurrentRequest().getMethod().matches("DELETE|PUT")) {
-                  if (command.getCurrentRequest().getRequestLine().contains("/keys/")) {
-                     if (message.contains("Compare failed") || message.contains("Key already exists")) {
-                        exception = new IllegalArgumentException(message);
-                        break;
-                     }
-                  }
-               }
-         }
-      } catch (Exception e) {
-         exception = new HttpResponseException(command, response, e);
-      } finally {
-         if (exception == null) {
-            exception = message != null ? new HttpResponseException(command, response, message)
-                  : new HttpResponseException(command, response);
-         }
-         closeQuietly(response.getPayload());
-         command.setException(exception);
-      }
-   }
+                if (command.getCurrentRequest().getMethod().matches("DELETE|PUT")) {
+                    if (command.getCurrentRequest().getRequestLine().contains("/keys/")) {
+                        if (message.contains("Compare failed") || message.contains("Key already exists")) {
+                            exception = new IllegalArgumentException(message);
+                            break;
+                        }
+                    }
+                }
+            default:
+                exception = new HttpResponseException(command, response, message);
+            }
+        } catch (Exception e) {
+            exception = new HttpResponseException(command, response, e);
+        } finally {
+            closeQuietly(response.getPayload());
+            command.setException(exception);
+        }
+    }
 
-   private String parseMessage(HttpResponse response) {
-      if (response.getPayload() == null)
-         return null;
-      try {
-         return Strings2.toStringAndClose(response.getPayload().openStream());
-      } catch (IOException e) {
-         throw Throwables.propagate(e);
-      }
-   }
+    private String parseMessage(HttpResponse response) {
+        if (response.getPayload() == null) {
+            return null;
+        }
+        try {
+            return Strings2.toStringAndClose(response.getPayload().openStream());
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        }
+    }
 }

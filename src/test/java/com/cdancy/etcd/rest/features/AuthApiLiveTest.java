@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.cdancy.etcd.rest.features;
 
-import static org.testng.Assert.assertTrue;
+package com.cdancy.etcd.rest.features;
 
 import org.testng.annotations.Test;
 
@@ -25,13 +24,12 @@ import com.cdancy.etcd.rest.BaseEtcdApiLiveTest;
 @Test(testName = "AuthApiLiveTest", singleThreaded = true)
 public class AuthApiLiveTest extends BaseEtcdApiLiveTest {
 
-   @Test
-   public void testIsEnabled() {
-      boolean enabled = api().isEnabled();
-      assertTrue(enabled == true || enabled == false);
-   }
+    @Test
+    public void testIsEnabled() {
+        api().isEnabled();
+    }
 
-   private AuthApi api() {
-      return api.authApi();
-   }
+    private AuthApi api() {
+        return api.authApi();
+    }
 }

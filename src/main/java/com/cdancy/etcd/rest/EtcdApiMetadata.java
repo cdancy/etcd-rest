@@ -31,52 +31,52 @@ import com.google.inject.Module;
 @AutoService(ApiMetadata.class)
 public class EtcdApiMetadata extends BaseHttpApiMetadata<EtcdApi> {
 
-   public static final String API_VERSION = "v2";
-   public static final String BUILD_VERSION = "2.3.3";
+    public static final String API_VERSION = "v2";
+    public static final String BUILD_VERSION = "2.3.3";
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromApiMetadata(this);
-   }
+    @Override
+    public Builder toBuilder() {
+        return new Builder().fromApiMetadata(this);
+    }
 
-   public EtcdApiMetadata() {
-      this(new Builder());
-   }
+    public EtcdApiMetadata() {
+        this(new Builder());
+    }
 
-   protected EtcdApiMetadata(Builder builder) {
-      super(builder);
-   }
+    protected EtcdApiMetadata(Builder builder) {
+        super(builder);
+    }
 
-   public static Properties defaultProperties() {
-      Properties properties = BaseHttpApiMetadata.defaultProperties();
-      return properties;
-   }
+    public static Properties defaultProperties() {
+        Properties properties = BaseHttpApiMetadata.defaultProperties();
+        return properties;
+    }
 
-   public static class Builder extends BaseHttpApiMetadata.Builder<EtcdApi, Builder> {
+    public static class Builder extends BaseHttpApiMetadata.Builder<EtcdApi, Builder> {
 
-      protected Builder() {
-         super(EtcdApi.class);
-         id("etcd").name("Etcd API").identityName("Optional Username").credentialName("Optional Password")
-               .defaultIdentity("").defaultCredential("")
-               .documentation(URI.create("https://github.com/coreos/etcd/blob/master/Documentation/api.md"))
-               .version(API_VERSION).buildVersion(BUILD_VERSION).defaultEndpoint("http://127.0.0.1:2379")
-               .defaultProperties(EtcdApiMetadata.defaultProperties())
-               .defaultModules(ImmutableSet.<Class<? extends Module>> of(EtcdHttpApiModule.class));
-      }
+        protected Builder() {
+            super(EtcdApi.class);
+            id("etcd").name("Etcd API").identityName("Optional Username").credentialName("Optional Password")
+                    .defaultIdentity("").defaultCredential("")
+                    .documentation(URI.create("https://github.com/coreos/etcd/blob/master/Documentation/api.md"))
+                    .version(API_VERSION).buildVersion(BUILD_VERSION).defaultEndpoint("http://127.0.0.1:2379")
+                    .defaultProperties(EtcdApiMetadata.defaultProperties())
+                    .defaultModules(ImmutableSet.<Class<? extends Module>> of(EtcdHttpApiModule.class));
+        }
 
-      @Override
-      public EtcdApiMetadata build() {
-         return new EtcdApiMetadata(this);
-      }
+        @Override
+        public EtcdApiMetadata build() {
+            return new EtcdApiMetadata(this);
+        }
 
-      @Override
-      protected Builder self() {
-         return this;
-      }
+        @Override
+        protected Builder self() {
+            return this;
+        }
 
-      @Override
-      public Builder fromApiMetadata(ApiMetadata in) {
-         return this;
-      }
-   }
+        @Override
+        public Builder fromApiMetadata(ApiMetadata in) {
+            return this;
+        }
+    }
 }

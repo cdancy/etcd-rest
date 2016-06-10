@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertNotNull;
@@ -27,29 +28,28 @@ import com.cdancy.etcd.rest.domain.miscellaneous.Version;
 @Test(groups = "live", testName = "MiscellaneousApiLiveTest", singleThreaded = true)
 public class MiscellaneousApiLiveTest extends BaseEtcdApiLiveTest {
 
-   private final String versionRegex = "^\\d+\\.\\d+\\.\\d+$";
+    private final String versionRegex = "^\\d+\\.\\d+\\.\\d+$";
 
-   @Test
-   public void testGetVersion() {
-      Version version = api().version();
-      assertNotNull(version);
-      assertTrue(version.etcdServer().matches(versionRegex));
-      assertTrue(version.etcdCluster().matches(versionRegex));
-   }
+    @Test
+    public void testGetVersion() {
+        Version version = api().version();
+        assertNotNull(version);
+        assertTrue(version.etcdServer().matches(versionRegex));
+        assertTrue(version.etcdCluster().matches(versionRegex));
+    }
 
-   @Test
-   public void testGetHealth() {
-      boolean health = api().health();
-      assertTrue(health == true || health == false);
-   }
+    @Test
+    public void testGetHealth() {
+        api().health();
+    }
 
-   @Test
-   public void testGetMetrics() {
-      String metrics = api().metrics();
-      assertNotNull(metrics);
-   }
+    @Test
+    public void testGetMetrics() {
+        String metrics = api().metrics();
+        assertNotNull(metrics);
+    }
 
-   private MiscellaneousApi api() {
-      return api.miscellaneousApi();
-   }
+    private MiscellaneousApi api() {
+        return api.miscellaneousApi();
+    }
 }

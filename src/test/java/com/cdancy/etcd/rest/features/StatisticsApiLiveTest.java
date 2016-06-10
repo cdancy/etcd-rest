@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest.features;
 
 import static org.testng.Assert.assertNotNull;
@@ -33,45 +34,45 @@ import com.google.inject.Module;
 @Test(groups = "live", testName = "StatisticsApiLiveTest", singleThreaded = true)
 public class StatisticsApiLiveTest extends BaseEtcdApiLiveTest {
 
-   private Self self;
+    private Self self;
 
-   @Test
-   public void testGetSelf() {
-      self = api().self();
-      assertNotNull(self);
-   }
+    @Test
+    public void testGetSelf() {
+        self = api().self();
+        assertNotNull(self);
+    }
 
-   @Test(dependsOnMethods = "testGetSelf")
-   public void testGetLeader() {
+    @Test(dependsOnMethods = "testGetSelf")
+    public void testGetLeader() {
 
-      /*
-       * It's possible the default end-point is not the cluster leader. If true
-       * we will iterate through all members to find the leader and execute the
-       * 'leader' endpoint against its client URL.
-       */
-      if (self.state().equals("StateLeader")) {
-         assertNotNull(api().leader());
-      } else {
-         for (Member possibleLeader : api.membersApi().list()) {
-            if (possibleLeader.id().equals(self.leaderInfo().leader())) {
-               Properties properties = new Properties();
-               properties.setProperty(Constants.PROPERTY_ENDPOINT, possibleLeader.clientURLs().get(0));
-               Iterable<Module> modules = setupModules();
-               EtcdApi etcdApi = super.create(properties, modules);
-               assertNotNull(etcdApi.statisticsApi().leader());
-               return;
+        /*
+         * It's possible the default end-point is not the cluster leader. If
+         * true we will iterate through all members to find the leader and
+         * execute the 'leader' endpoint against its client URL.
+         */
+        if (self.state().equals("StateLeader")) {
+            assertNotNull(api().leader());
+        } else {
+            for (Member possibleLeader : api.membersApi().list()) {
+                if (possibleLeader.id().equals(self.leaderInfo().leader())) {
+                    Properties properties = new Properties();
+                    properties.setProperty(Constants.PROPERTY_ENDPOINT, possibleLeader.clientURLs().get(0));
+                    Iterable<Module> modules = setupModules();
+                    EtcdApi etcdApi = super.create(properties, modules);
+                    assertNotNull(etcdApi.statisticsApi().leader());
+                    return;
+                }
             }
-         }
-         fail("Could not find a leader within cluster");
-      }
-   }
+            fail("Could not find a leader within cluster");
+        }
+    }
 
-   @Test
-   public void testGetStore() {
-      assertNotNull(api().store());
-   }
+    @Test
+    public void testGetStore() {
+        assertNotNull(api().store());
+    }
 
-   private StatisticsApi api() {
-      return api.statisticsApi();
-   }
+    private StatisticsApi api() {
+        return api.statisticsApi();
+    }
 }

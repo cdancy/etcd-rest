@@ -24,13 +24,13 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Grant {
 
-   public abstract KeyValue kv();
+    public abstract KeyValue kv();
 
-   Grant() {
-   }
+    Grant() {
+    }
 
-   @SerializedNames({ "kv" })
-   public static Grant create(KeyValue kv) {
-      return new AutoValue_Grant(kv);
-   }
+    @SerializedNames({ "kv" })
+    public static Grant create(KeyValue kv) {
+        return new AutoValue_Grant(kv);
+    }
 }

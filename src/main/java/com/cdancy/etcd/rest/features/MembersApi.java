@@ -45,19 +45,19 @@ import com.cdancy.etcd.rest.filters.EtcdAuthentication;
 @Path("/{jclouds.api-version}/members")
 public interface MembersApi {
 
-   @Named("members:list")
-   @SelectJson("members")
-   @GET
-   List<Member> list();
+    @Named("members:list")
+    @SelectJson("members")
+    @GET
+    List<Member> list();
 
-   @Named("members:add")
-   @Fallback(MemberOnIllegalRequest.class)
-   @POST
-   Member add(@BinderParam(BindToJsonPayload.class) CreateMember memberToCreate);
+    @Named("members:add")
+    @Fallback(MemberOnIllegalRequest.class)
+    @POST
+    Member add(@BinderParam(BindToJsonPayload.class) CreateMember memberToCreate);
 
-   @Named("members:delete")
-   @Path("/{id}")
-   @Fallback(FalseOnNotFoundOr404.class)
-   @DELETE
-   boolean delete(@PathParam("id") String memberID);
+    @Named("members:delete")
+    @Path("/{id}")
+    @Fallback(FalseOnNotFoundOr404.class)
+    @DELETE
+    boolean delete(@PathParam("id") String memberID);
 }

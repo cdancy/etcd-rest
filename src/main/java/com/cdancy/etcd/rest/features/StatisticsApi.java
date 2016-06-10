@@ -35,28 +35,33 @@ import com.cdancy.etcd.rest.filters.EtcdAuthentication;
 @Path("/{jclouds.api-version}/stats")
 public interface StatisticsApi {
 
-   /**
-    * @return information on leader and entire cluster but only if WE are the
-    *         leader
-    */
-   @Named("statistics:leader")
-   @Path("/leader")
-   @GET
-   Leader leader();
+    /**
+     * Information on leader and entire cluster but only if WE are the leader.
+     * 
+     * @return instance of Leader
+     */
+    @Named("statistics:leader")
+    @Path("/leader")
+    @GET
+    Leader leader();
 
-   /**
-    * @return information on node we are currently pointing at
-    */
-   @Named("statistics:self")
-   @Path("/self")
-   @GET
-   Self self();
+    /**
+     * Information on node we are currently pointing at.
+     * 
+     * @return Instance of Self
+     */
+    @Named("statistics:self")
+    @Path("/self")
+    @GET
+    Self self();
 
-   /**
-    * @return information about operations this node has handled
-    */
-   @Named("statistics:store")
-   @Path("/store")
-   @GET
-   Store store();
+    /**
+     * Information about operations this node has handled.
+     * 
+     * @return instance of Store
+     */
+    @Named("statistics:store")
+    @Path("/store")
+    @GET
+    Store store();
 }

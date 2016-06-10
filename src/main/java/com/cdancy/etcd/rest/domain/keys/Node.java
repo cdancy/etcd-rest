@@ -28,33 +28,33 @@ import com.google.common.collect.ImmutableList;
 @AutoValue
 public abstract class Node {
 
-   public abstract int createdIndex();
+    public abstract int createdIndex();
 
-   public abstract boolean dir();
+    public abstract boolean dir();
 
-   public abstract List<Node> nodes();
+    public abstract List<Node> nodes();
 
-   @Nullable
-   public abstract String expiration();
+    @Nullable
+    public abstract String expiration();
 
-   @Nullable
-   public abstract String key();
+    @Nullable
+    public abstract String key();
 
-   public abstract int modifiedIndex();
+    public abstract int modifiedIndex();
 
-   public abstract int ttl();
+    public abstract int ttl();
 
-   @Nullable
-   public abstract String value();
+    @Nullable
+    public abstract String value();
 
-   Node() {
-   }
+    Node() {
+    }
 
-   @SerializedNames({ "createdIndex", "dir", "nodes", "expiration", "key", "modifiedIndex", "ttl", "value" })
-   public static Node create(int createdIndex, boolean dir, List<Node> nodes, String expiration, String key,
-         int modifiedIndex, int ttl, String value) {
-      return new AutoValue_Node(createdIndex, dir,
-            nodes != null ? ImmutableList.copyOf(nodes) : ImmutableList.<Node> of(), expiration, key, modifiedIndex,
-            ttl, value);
-   }
+    @SerializedNames({ "createdIndex", "dir", "nodes", "expiration", "key", "modifiedIndex", "ttl", "value" })
+    public static Node create(int createdIndex, boolean dir, List<Node> nodes, String expiration, String key,
+            int modifiedIndex, int ttl, String value) {
+        return new AutoValue_Node(createdIndex, dir,
+                nodes != null ? ImmutableList.copyOf(nodes) : ImmutableList.<Node> of(), expiration, key, modifiedIndex,
+                ttl, value);
+    }
 }

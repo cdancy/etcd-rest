@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.cdancy.etcd.rest;
 
 import java.util.Properties;
@@ -29,23 +30,23 @@ import com.google.inject.Module;
 @Test(groups = "live")
 public class BaseEtcdApiLiveTest extends BaseApiLiveTest<EtcdApi> {
 
-   public BaseEtcdApiLiveTest() {
-      provider = "etcd";
-   }
+    public BaseEtcdApiLiveTest() {
+        provider = "etcd";
+    }
 
-   @Override
-   protected Iterable<Module> setupModules() {
-      return ImmutableSet.<Module> of(getLoggingModule());
-   }
+    @Override
+    protected Iterable<Module> setupModules() {
+        return ImmutableSet.<Module> of(getLoggingModule());
+    }
 
-   @Override
-   protected Properties setupProperties() {
-      Properties overrides = super.setupProperties();
-      overrides.setProperty(Constants.PROPERTY_MAX_RETRIES, "0");
-      return overrides;
-   }
+    @Override
+    protected Properties setupProperties() {
+        Properties overrides = super.setupProperties();
+        overrides.setProperty(Constants.PROPERTY_MAX_RETRIES, "0");
+        return overrides;
+    }
 
-   protected String randomString() {
-      return UUID.randomUUID().toString().replaceAll("-", "");
-   }
+    protected String randomString() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
+    }
 }

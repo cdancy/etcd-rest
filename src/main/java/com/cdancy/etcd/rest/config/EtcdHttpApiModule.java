@@ -35,15 +35,15 @@ import com.google.inject.Scopes;
 @ConfiguresHttpCommandExecutorService
 public class EtcdHttpApiModule extends HttpApiModule<EtcdApi> {
 
-   @Override
-   protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(EtcdErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(EtcdErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(EtcdErrorHandler.class);
-   }
+    @Override
+    protected void bindErrorHandlers() {
+        bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(EtcdErrorHandler.class);
+        bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(EtcdErrorHandler.class);
+        bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(EtcdErrorHandler.class);
+    }
 
-   protected void configure() {
-      super.configure();
-      bind(HttpCommandExecutorService.class).to(OkHttpCommandExecutorService.class).in(Scopes.SINGLETON);
-   }
+    protected void configure() {
+        super.configure();
+        bind(HttpCommandExecutorService.class).to(OkHttpCommandExecutorService.class).in(Scopes.SINGLETON);
+    }
 }

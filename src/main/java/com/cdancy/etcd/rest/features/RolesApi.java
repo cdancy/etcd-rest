@@ -45,26 +45,26 @@ import com.cdancy.etcd.rest.filters.EtcdAuthentication;
 @Path("/{jclouds.api-version}/auth/roles")
 public interface RolesApi {
 
-   @Named("auth-role:create")
-   @Path("/{role}")
-   @Fallback(RoleOnAlreadyExists.class)
-   @PUT
-   Role create(@PathParam("role") String role, @BinderParam(BindToJsonPayload.class) Role roleState);
+    @Named("auth-role:create")
+    @Path("/{role}")
+    @Fallback(RoleOnAlreadyExists.class)
+    @PUT
+    Role create(@PathParam("role") String role, @BinderParam(BindToJsonPayload.class) Role roleState);
 
-   @Named("auth-role:list")
-   @SelectJson("roles")
-   @GET
-   List<Role> list();
+    @Named("auth-role:list")
+    @SelectJson("roles")
+    @GET
+    List<Role> list();
 
-   @Named("auth-role:get")
-   @Path("/{role}")
-   @Fallback(NullOnNotFoundOr404.class)
-   @GET
-   Role get(@PathParam("role") String role);
+    @Named("auth-role:get")
+    @Path("/{role}")
+    @Fallback(NullOnNotFoundOr404.class)
+    @GET
+    Role get(@PathParam("role") String role);
 
-   @Named("auth-role:delete")
-   @Path("/{role}")
-   @Fallback(FalseOnNotFoundOr404.class)
-   @DELETE
-   boolean delete(@PathParam("role") String role);
+    @Named("auth-role:delete")
+    @Path("/{role}")
+    @Fallback(FalseOnNotFoundOr404.class)
+    @DELETE
+    boolean delete(@PathParam("role") String role);
 }
