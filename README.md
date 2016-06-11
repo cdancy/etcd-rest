@@ -44,6 +44,8 @@ Setting the `endpoint` can be done with any of the following (searched in order)
 - `etcd.rest.endpoint`
 - `etcdRestEndpoint`
 - `ETCD_REST_ENDPOINT`
+- `ETCD_LISTEN_CLIENT_URLS` (first in list that is reachable will be used)
+- `ETCD_ADVERTISE_CLIENT_URLS` (first in list that is reachable will be used)
 
 Setting the `credentials` can be done with any of the following (searched in order):
 
