@@ -30,8 +30,8 @@ public class EtcdClient {
             "ETCD_LISTEN_CLIENT_URLS", "ETCD_ADVERTISE_CLIENT_URLS" };
     private static String[] credentialsProperties = { "etcd.rest.credentials", "etcdRestCredentials",
             "ETCD_REST_CREDENTIALS" };
-    private String endPoint;
-    private String credentials;
+    private final String endPoint;
+    private final String credentials;
     private final EtcdApi etcdApi;
 
     /**
@@ -39,10 +39,21 @@ public class EtcdClient {
      * variables for the endPoint and credentials.
      */
     public EtcdClient() {
-        configureParameters();
+        this.endPoint = initEndPoint();
+        this.credentials = initCredentials();
+        this.etcdApi = createApi(this.endPoint(), this.credentials());
+    }
 
-        this.etcdApi = ContextBuilder.newBuilder(new EtcdApiMetadata.Builder().build()).endpoint(endPoint())
-                .credentials("N/A", credentials()).buildApi(EtcdApi.class);
+    /**
+     * Create an EtcdClient.
+     * 
+     * @param endPoint
+     *            url of etcd instance
+     */
+    public EtcdClient(@Nullable final String endPoint) {
+        this.endPoint = endPoint != null ? endPoint : initEndPoint();
+        this.credentials = initCredentials();
+        this.etcdApi = createApi(this.endPoint(), this.credentials());
     }
 
     /**
@@ -53,48 +64,53 @@ public class EtcdClient {
      * @param credentials
      *            the optional credentials for the etcd instance
      */
-    public EtcdClient(final String endPoint, @Nullable final String credentials) {
-        this.endPoint = endPoint;
-        this.credentials = credentials;
-
-        this.etcdApi = ContextBuilder.newBuilder(new EtcdApiMetadata.Builder().build()).endpoint(endPoint())
-                .credentials("N/A", credentials()).buildApi(EtcdApi.class);
+    public EtcdClient(@Nullable final String endPoint, @Nullable final String credentials) {
+        this.endPoint = endPoint != null ? endPoint : initEndPoint();
+        this.credentials = credentials != null ? credentials : initCredentials();
+        this.etcdApi = createApi(this.endPoint(), this.credentials());
     }
 
     /**
-     * Configure the endPoint and credentials by querying the system, and then
-     * the environment, for the relevant property names.
+     * Initialize endPoint
+     * 
+     * @return found endpoint or null
      */
-    private void configureParameters() {
-
-        // query system for endPoint value
-        if (endPoint == null) {
-            endPoint = retrivePropertyValue(true, endPointProperties);
-        }
-
-        // query system for credentials value
-        if (credentials == null) {
-            credentials = retrivePropertyValue(false, credentialsProperties);
-        }
+    private String initEndPoint() {
+        String possibleValue = retrivePropertyValueAndPing(true, endPointProperties);
+        return possibleValue != null ? possibleValue : "http://127.0.0.1:2379";
     }
 
     /**
-     * Retrieve property value while optionally pinging, if it is found, to see
-     * if it is reachable.
+     * Initialize credentials
+     * 
+     * @return found credentials or empty String
+     */
+    private String initCredentials() {
+        String possibleValue = retrivePropertyValueAndPing(false, credentialsProperties);
+        return possibleValue != null ? possibleValue : "";
+    }
+
+    public EtcdApi createApi(String endPoint, String credentials) {
+        return ContextBuilder.newBuilder(new EtcdApiMetadata.Builder().build()).endpoint(endPoint)
+                .credentials("N/A", credentials).buildApi(EtcdApi.class);
+    }
+
+    /**
+     * Retrieve property value from list of keys.
      * 
      * @param ping
-     *            whether to ping URL
+     *            whether to attempt a ping on the found value
      * @param keys
      *            list of keys to search
      * @return the first value found from list of keys
      */
-    public String retrivePropertyValue(boolean ping, String... keys) {
+    private String retrivePropertyValueAndPing(boolean ping, String... keys) {
         String value = null;
         for (String possibleKey : keys) {
             value = retrivePropertyValue(possibleKey);
             if (value != null) {
                 if (ping) {
-                    if (EtcdClient.pingEtcdURL(value, 60000)) {
+                    if (EtcdClient.pingEtcdURL(value, 10000)) {
                         break;
                     }
                 } else {
@@ -106,14 +122,13 @@ public class EtcdClient {
     }
 
     /**
-     * Check system properties, and then environment variables, for value of
-     * key.
+     * Retrieve property value from key.
      * 
      * @param key
      *            the key to search for
      * @return the value of key or null if not found
      */
-    public String retrivePropertyValue(String key) {
+    private String retrivePropertyValue(String key) {
         String value = System.getProperty(key);
         return value != null ? value : System.getenv(key);
     }
