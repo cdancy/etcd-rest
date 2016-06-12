@@ -71,7 +71,7 @@ public class EtcdClient {
     }
 
     /**
-     * Initialize endPoint
+     * Initialize endPoint.
      * 
      * @return found endpoint or null
      */
@@ -81,7 +81,7 @@ public class EtcdClient {
     }
 
     /**
-     * Initialize credentials
+     * Initialize credentials.
      * 
      * @return found credentials or empty String
      */
