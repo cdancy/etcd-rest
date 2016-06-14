@@ -36,6 +36,7 @@ public abstract class Leader {
 
     @SerializedNames({ "leader", "followers" })
     private static Leader create(String leader, Map<String, Follower> followers) {
-        return new AutoValue_Leader(leader, ImmutableMap.copyOf(followers));
+        return new AutoValue_Leader(leader,
+                followers != null ? ImmutableMap.copyOf(followers) : ImmutableMap.<String, Follower> of());
     }
 }
