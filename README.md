@@ -1,10 +1,12 @@
-[![Build Status](https://travis-ci.org/cdancy/etcd-rest.svg?branch=master)](https://travis-ci.org/cdancy/etcd-rest)
 # etcd-rest
 ![alt tag](https://github.com/cdancy/etcd/blob/master/logos/etcd-horizontal-color.png)
 
-java-based client to interact with Etcd's REST API. 
+java client to interact with Etcd's REST API. 
 
-**As of 3/27/16 etcd-rest is considered feature complete with etcd v2 API.
+## Status
+<a href='https://bintray.com/cdancy/java-libraries/etcd-rest/view?source=watch' alt='Get automatic notifications about new "etcd-rest" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a>
+[ ![Download](https://api.bintray.com/packages/cdancy/java-libraries/etcd-rest/images/download.png) ](https://bintray.com/cdancy/java-libraries/etcd-rest/_latestVersion)
+[![Build Status](https://travis-ci.org/cdancy/etcd-rest.svg?branch=master)](https://travis-ci.org/cdancy/etcd-rest)
 
 ## Setup
 
@@ -85,8 +87,8 @@ that you can use in your own code.
 
 ## Components
 
-- jclouds \- used as the backend for communicating with Etcd's REST API
-- AutoValue \- used to create immutable value types both to and from the etcd program
+- [jclouds](https://github.com/jclouds/jclouds) \- used as the backend for communicating with Etcd's REST API
+- [AutoValue](https://github.com/google/auto) \- used to create immutable value types both to and from the etcd program
     
 ## Testing
 
@@ -101,8 +103,12 @@ Running integration tests can be done like so (requires docker):
 Running integration tests without invoking docker can be done like so:
 
 	./gradlew clean build integTest -PbootstrapDocker=false -PtestEtcdEndpoint=http://127.0.0.1:2379 
-	
-# Additional Resources
+
+## Projects leveraging this library
+
+* [gradle-etcd-rest-plugin](https://github.com/cdancy/gradle-etcd-rest-plugin)
+
+## Additional Resources
 
 * [Etcd REST API](https://github.com/coreos/etcd/blob/master/Documentation/api.md)
 * [Etcd Auth API](https://github.com/coreos/etcd/blob/master/Documentation/auth_api.md)
