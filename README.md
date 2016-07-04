@@ -26,7 +26,7 @@ Can be sourced from jcenter like so:
 	<dependency>
 	  <groupId>com.cdancy</groupId>
 	  <artifactId>etcd-rest</artifactId>
-	  <version>0.9.2</version>
+	  <version>3.0.0</version>
 	  <classifier>sources|javadoc|all</classifier> (Optional)
 	</dependency>
 	
@@ -110,6 +110,8 @@ Running integration tests without invoking docker can be done like so:
 
 ## Additional Resources
 
+* [Etcd grpc-to-json gateway](https://github.com/coreos/etcd/blob/master/Documentation/dev-guide/api_grpc_gateway.md)
+* [Etcd grpc-to-json swagger](https://github.com/coreos/etcd/blob/master/Documentation/dev-guide/apispec/swagger/rpc.swagger.json)
 * [Etcd REST API](https://github.com/coreos/etcd/blob/master/Documentation/api.md)
 * [Etcd Auth API](https://github.com/coreos/etcd/blob/master/Documentation/auth_api.md)
 * [Apache jclouds](https://jclouds.apache.org/start/)

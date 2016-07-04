@@ -31,8 +31,8 @@ import com.google.inject.Module;
 @AutoService(ApiMetadata.class)
 public class EtcdApiMetadata extends BaseHttpApiMetadata<EtcdApi> {
 
-    public static final String API_VERSION = "v2";
-    public static final String BUILD_VERSION = "2.3.3";
+    public static final String API_VERSION = "v3alpha";
+    public static final String BUILD_VERSION = "3.0.1";
 
     @Override
     public Builder toBuilder() {

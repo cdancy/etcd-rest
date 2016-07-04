@@ -1,3 +1,7 @@
+### Version 3.0.0 (TBA)
+
+* Rebase off of etcd-v3.0.0
+
 ### Version 0.9.3 (TBA)
 
 * Travis CI integration
