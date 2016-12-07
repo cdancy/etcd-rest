@@ -110,7 +110,7 @@ Running integration tests without invoking docker can be done like so:
 
 ## Additional Resources
 
-* [Etcd REST API](https://github.com/coreos/etcd/blob/master/Documentation/api.md)
-* [Etcd Auth API](https://github.com/coreos/etcd/blob/master/Documentation/auth_api.md)
+* [Etcd REST API](https://github.com/coreos/etcd/blob/master/Documentation/v2/api.md)
+* [Etcd Auth API](https://github.com/coreos/etcd/blob/master/Documentation/v2/auth_api.md)
 * [Apache jclouds](https://jclouds.apache.org/start/)
 
