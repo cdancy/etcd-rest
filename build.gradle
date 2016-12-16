@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1'
-        classpath "com.bmuschko:gradle-docker-plugin:3.0.0"
+        classpath "com.bmuschko:gradle-docker-plugin:3.0.4"
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
 }
@@ -165,7 +165,7 @@ task teardownNode(type: com.bmuschko.gradle.docker.tasks.container.DockerRemoveC
 public boolean checkNode() {
     boolean containerFound = false
     try {
-        Task inspect = project.tasks.getByName("inspectNode")
+        def inspect = project.tasks.getByName("inspectNode")
         inspect.execute()
         containerFound = true
     } catch (Exception e) {
