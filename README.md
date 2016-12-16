@@ -1,18 +1,15 @@
+[![Build Status](https://travis-ci.org/cdancy/etcd-rest.svg?branch=master)](https://travis-ci.org/cdancy/etcd-rest)
+[![Download](https://api.bintray.com/packages/cdancy/java-libraries/etcd-rest/images/download.svg) ](https://bintray.com/cdancy/java-libraries/etcd-rest/_latestVersion)
 # etcd-rest
 ![alt tag](https://github.com/cdancy/etcd/blob/master/logos/etcd-horizontal-color.png)
 
-java client to interact with Etcd's REST API. 
+java client to interact with Etcd's v2 REST API. 
 
-## Status
-<a href='https://bintray.com/cdancy/java-libraries/etcd-rest/view?source=watch' alt='Get automatic notifications about new "etcd-rest" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a>
-[ ![Download](https://api.bintray.com/packages/cdancy/java-libraries/etcd-rest/images/download.png) ](https://bintray.com/cdancy/java-libraries/etcd-rest/_latestVersion)
-[![Build Status](https://travis-ci.org/cdancy/etcd-rest.svg?branch=master)](https://travis-ci.org/cdancy/etcd-rest)
-
-## Setup
+## Setup and How to use
 
 Client's can be built like so:
 
-      EtcdClient client = new EtcdClient.Builder()
+      EtcdClient client = EtcdClient.builder()
       .endPoint("http://127.0.0.1:2379") // Optional. Defaults to http://127.0.0.1:2379
       .credentials("admin:password") // Optional.
       .build();
