@@ -4,6 +4,7 @@ build
 bin
 out 
 .gradle
+.vagrant
 
 # OS generated files #
 ######################
@@ -11,11 +12,12 @@ out
 
 # IDE generated files #
 ######################
-.settings/
-.classpath
-.project
+.settings/ 
+.classpath 
+.project 
 .README* 
 .idea 
 *.iml 
 *.ipr
 *.iws
+/.nb-gradle/

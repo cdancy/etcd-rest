@@ -47,18 +47,18 @@ publishing {
 }
 
 artifactory {
-	contextUrl = artifactoryURL
-	publish {
-		repository {
-			repoKey = version.endsWith('-SNAPSHOT') ? snapshotRepository : releaseRepository
-			username = artifactoryUser
-			password = artifactoryPassword
-			maven = true
-		}
-		defaults {
-			publications ('mavenJava')
-		}
-	}
+    contextUrl = artifactoryURL
+    publish {
+        repository {
+            repoKey = version.endsWith('-SNAPSHOT') ? snapshotRepository : releaseRepository
+            username = artifactoryUser
+            password = artifactoryPassword
+            mavenCompatible = true
+        }
+        defaults {
+            publications ('mavenJava')
+        }
+    }
 }
 bintray {
 
@@ -81,7 +81,7 @@ bintray {
         githubReleaseNotesFile = 'RELEASE_NOTES.md'
 
         version {
-        	released  = new Date()
+            released  = new Date()
             vcsTag = "v${project.version}"
             attributes = ['etcd-rest': ["${project.group}:${project.name}:${project.version}"]]
 
