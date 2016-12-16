@@ -3,7 +3,7 @@
 # etcd-rest
 ![alt tag](https://coreos.com/assets/images/svg/logos/etcd-horizontal-color.svg)
 
-java client to interact with Etcd's v2 REST API. 
+java client, based on jclouds, to interact with Etcd's v2 REST API. 
 
 ## Setup and How to use
 
