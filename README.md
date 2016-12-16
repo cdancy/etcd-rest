@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/cdancy/etcd-rest.svg?branch=master)](https://travis-ci.org/cdancy/etcd-rest)
 [![Download](https://api.bintray.com/packages/cdancy/java-libraries/etcd-rest/images/download.svg) ](https://bintray.com/cdancy/java-libraries/etcd-rest/_latestVersion)
 # etcd-rest
-![alt tag](https://github.com/cdancy/etcd/blob/master/logos/etcd-horizontal-color.png)
+![alt tag](https://coreos.com/assets/images/svg/logos/etcd-horizontal-color.svg)
 
 java client to interact with Etcd's v2 REST API. 
 
