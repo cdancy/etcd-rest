@@ -30,7 +30,7 @@ public class EtcdClientLiveTest extends BaseEtcdApiLiveTest {
 
     @Test
     public void testCreateClient() {
-        EtcdClient client = new EtcdClient.Builder().endPoint(this.endpoint).build();
+        EtcdClient client = EtcdClient.builder().endPoint(this.endpoint).build();
 
         Version version = client.api().miscellaneousApi().version();
         assertNotNull(version);

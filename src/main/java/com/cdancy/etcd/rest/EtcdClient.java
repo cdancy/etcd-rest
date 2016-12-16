@@ -26,9 +26,9 @@ import org.jclouds.javax.annotation.Nullable;
 
 public class EtcdClient {
 
-    private static String[] endPointProperties = { "etcd.rest.endpoint", "etcdRestEndpoint", "ETCD_REST_ENDPOINT",
+    private static final String[] ENDPOINT_PROPERTIES = { "etcd.rest.endpoint", "etcdRestEndpoint", "ETCD_REST_ENDPOINT",
             "ETCD_LISTEN_CLIENT_URLS", "ETCD_ADVERTISE_CLIENT_URLS" };
-    private static String[] credentialsProperties = { "etcd.rest.credentials", "etcdRestCredentials",
+    private static final String[] CREDENTIALS_PROPERTIES = { "etcd.rest.credentials", "etcdRestCredentials",
             "ETCD_REST_CREDENTIALS" };
     private final String endPoint;
     private final String credentials;
@@ -76,7 +76,7 @@ public class EtcdClient {
      * @return found endpoint or null
      */
     private String initEndPoint() {
-        String possibleValue = retrivePropertyValueAndPing(true, endPointProperties);
+        String possibleValue = retrivePropertyValueAndPing(true, ENDPOINT_PROPERTIES);
         return possibleValue != null ? possibleValue : "http://127.0.0.1:2379";
     }
 
@@ -86,7 +86,7 @@ public class EtcdClient {
      * @return found credentials or empty String
      */
     private String initCredentials() {
-        String possibleValue = retrivePropertyValueAndPing(false, credentialsProperties);
+        String possibleValue = retrivePropertyValueAndPing(false, CREDENTIALS_PROPERTIES);
         return possibleValue != null ? possibleValue : "";
     }
 
@@ -143,6 +143,10 @@ public class EtcdClient {
 
     public EtcdApi api() {
         return etcdApi;
+    }
+    
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder {
