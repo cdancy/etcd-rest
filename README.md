@@ -1,3 +1,5 @@
+** As of 12/20/2016 this project is in legacy mode. Version `1.0.0` is intended to be the final release unless any bugs are reported. There are currently no plans in-flight to support the v3 api though I might pick up that work at sometime in the future, time permitting of course. If anyone wants to take on the work to support the v3 api I would be more than happy to help and mentor.
+
 [![Build Status](https://travis-ci.org/cdancy/etcd-rest.svg?branch=master)](https://travis-ci.org/cdancy/etcd-rest)
 [![Download](https://api.bintray.com/packages/cdancy/java-libraries/etcd-rest/images/download.svg) ](https://bintray.com/cdancy/java-libraries/etcd-rest/_latestVersion)
 # etcd-rest
