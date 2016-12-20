@@ -25,7 +25,7 @@ Can be sourced from jcenter like so:
 	<dependency>
 	  <groupId>com.cdancy</groupId>
 	  <artifactId>etcd-rest</artifactId>
-	  <version>0.9.2</version>
+	  <version>1.0.0</version>
 	  <classifier>sources|javadoc|all</classifier> (Optional)
 	</dependency>
 	
