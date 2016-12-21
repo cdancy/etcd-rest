@@ -1,4 +1,4 @@
-### Version 1.0.0 (TBA)
+### Version 1.0.0 (12/20/2016)
 
 * Travis CI integration
 * If user omits a url we will now search environment variables 'ETCD_LISTEN_CLIENT_URLS' and 'ETCD_AD…
